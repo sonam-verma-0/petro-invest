@@ -34,17 +34,10 @@ function Index() {
     const totalYears = years; // Year 0..n where n = years
     const flows: number[] = [];
     for (let i = 0; i <= totalYears; i++) {
-      if (i === 1) {
-        const inflow = annualSales + annualNfr + annualTaxBenefit;
-        const outflow = annualRevenueExp + capex;
-        flows.push(ci - co + inflow - outflow);
-      } else if (i === 0) {
-        flows.push(ci - co);
-      } else {
-        const inflow = annualSales + annualNfr + annualTaxBenefit;
-        const outflow = annualRevenueExp;
-        flows.push(inflow - outflow);
-      }
+      const inflow = annualSales + annualNfr + annualTaxBenefit;
+      const outflow = annualRevenueExp + (i === 0 ? capex : 0);
+      const base = i === 0 ? ci - co : 0;
+      flows.push(base + inflow - outflow);
     }
     return flows;
   }, [years, ci, co, capex, annualSales, annualNfr, annualRevenueExp, annualTaxBenefit]);
