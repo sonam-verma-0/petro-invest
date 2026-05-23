@@ -31,6 +31,7 @@ function Index() {
   const [years, setYears] = useState<number>(5);
   const wacc = 0.097;
   const [rows, setRows] = useState<YearRow[]>(() => Array.from({ length: 6 }, empty));
+  const [showResults, setShowResults] = useState(false);
 
   const setYearCount = (n: number) => {
     const clamped = Math.max(1, Math.min(30, n));
