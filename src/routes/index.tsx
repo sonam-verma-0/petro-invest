@@ -31,16 +31,18 @@ function Index() {
   const [showResults, setShowResults] = useState(false);
 
   const cashFlows = useMemo(() => {
-    const totalYears = years; // Year 0..n where n = years
     const flows: number[] = [];
-    for (let i = 0; i <= totalYears; i++) {
-      const inflow = annualSales + annualNfr + annualTaxBenefit;
-      const outflow = annualRevenueExp + (i === 0 ? capex : 0);
-      const base = i === 0 ? ci - co : 0;
-      flows.push(base + inflow - outflow);
+    // Year 0 = initial investment only (CI - CO - Capex). Operations start Year 1.
+    flows.push(ci - co - capex);
+    const annualNet = annualSales + annualNfr + annualTaxBenefit - annualRevenueExp;
+    for (let i = 1; i <= years; i++) {
+      flows.push(annualNet);
     }
     return flows;
   }, [years, ci, co, capex, annualSales, annualNfr, annualRevenueExp, annualTaxBenefit]);
+
+  const hasNegative = cashFlows.some((v) => v < 0);
+  const hasPositive = cashFlows.some((v) => v > 0);
 
   const mirrValue = useMemo(() => mirr(cashFlows, wacc, wacc), [cashFlows]);
   const npvValue = useMemo(() => npv(wacc, cashFlows), [cashFlows]);
