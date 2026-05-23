@@ -72,14 +72,18 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Lovable App" },
-      { name: "description", content: "Lovable Generated Project" },
+      { title: "Petro Invest" },
+      { name: "description", content: "Project Investment Insights helps Indian oil companies evaluate project investment viability." },
       { name: "author", content: "Lovable" },
-      { property: "og:title", content: "Lovable App" },
-      { property: "og:description", content: "Lovable Generated Project" },
+      { property: "og:title", content: "Petro Invest" },
+      { property: "og:description", content: "Project Investment Insights helps Indian oil companies evaluate project investment viability." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
       { name: "twitter:site", content: "@Lovable" },
+      { name: "twitter:title", content: "Petro Invest" },
+      { name: "twitter:description", content: "Project Investment Insights helps Indian oil companies evaluate project investment viability." },
+      { property: "og:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/05743f9b-f6bd-448f-bb1b-d00ef3036277/id-preview-3cba2c24--0b17417a-7a86-4834-97f7-dc80e954dd9e.lovable.app-1779371035402.png" },
+      { name: "twitter:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/05743f9b-f6bd-448f-bb1b-d00ef3036277/id-preview-3cba2c24--0b17417a-7a86-4834-97f7-dc80e954dd9e.lovable.app-1779371035402.png" },
     ],
     links: [
       {
