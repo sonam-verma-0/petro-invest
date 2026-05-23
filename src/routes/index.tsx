@@ -14,45 +14,33 @@ export const Route = createFileRoute("/")({
   component: Index,
 });
 
-type YearRow = {
-  sales: number;
-  nfr: number;
-  capex: number;
-  revenueExp: number;
-  taxBenefit: number;
-};
-
-const empty = (): YearRow => ({ sales: 0, nfr: 0, capex: 0, revenueExp: 0, taxBenefit: 0 });
-
 function Index() {
   const [ci, setCi] = useState<number>(0);
   const [co, setCo] = useState<number>(0);
+  const [capex, setCapex] = useState<number>(0);
   const [roType, setRoType] = useState<"existing" | "new">("new");
   const [years, setYears] = useState<number>(5);
   const wacc = 0.097;
-  const [rows, setRows] = useState<YearRow[]>(() => Array.from({ length: 6 }, empty));
+
+  // Annual values
+  const [annualSales, setAnnualSales] = useState<number>(0);
+  const [annualNfr, setAnnualNfr] = useState<number>(0);
+  const [annualRevenueExp, setAnnualRevenueExp] = useState<number>(0);
+  const [annualTaxBenefit, setAnnualTaxBenefit] = useState<number>(0);
+
   const [showResults, setShowResults] = useState(false);
 
-  const setYearCount = (n: number) => {
-    const clamped = Math.max(1, Math.min(30, n));
-    setYears(clamped);
-    setRows((prev) => {
-      const total = clamped + 1; // year 0..n
-      const next = prev.slice(0, total);
-      while (next.length < total) next.push(empty());
-      return next;
-    });
-  };
-
   const cashFlows = useMemo(() => {
-    return rows.map((r, i) => {
-      // Year 0 typically has the initial outflow (CI - CO if relevant, plus capex)
+    const totalYears = years; // Year 0..n where n = years
+    const flows: number[] = [];
+    for (let i = 0; i <= totalYears; i++) {
+      const inflow = annualSales + annualNfr + annualTaxBenefit;
+      const outflow = annualRevenueExp + (i === 0 ? capex : 0);
       const base = i === 0 ? ci - co : 0;
-      const inflow = r.sales + r.nfr + r.taxBenefit;
-      const outflow = r.capex + r.revenueExp;
-      return base + inflow - outflow;
-    });
-  }, [rows, ci, co]);
+      flows.push(base + inflow - outflow);
+    }
+    return flows;
+  }, [years, ci, co, capex, annualSales, annualNfr, annualRevenueExp, annualTaxBenefit]);
 
   const mirrValue = useMemo(() => mirr(cashFlows, wacc, wacc), [cashFlows]);
   const npvValue = useMemo(() => npv(wacc, cashFlows), [cashFlows]);
@@ -62,10 +50,6 @@ function Index() {
     : mirrValue > wacc
     ? { label: "Invest", tone: "success" as const, reason: `MIRR ${(mirrValue * 100).toFixed(2)}% exceeds WACC ${(wacc * 100).toFixed(1)}%.` }
     : { label: "Do Not Invest", tone: "destructive" as const, reason: `MIRR ${(mirrValue * 100).toFixed(2)}% is below WACC ${(wacc * 100).toFixed(1)}%.` };
-
-  const updateRow = (i: number, key: keyof YearRow, val: number) => {
-    setRows((prev) => prev.map((r, idx) => (idx === i ? { ...r, [key]: val } : r)));
-  };
 
   return (
     <main className="mx-auto max-w-7xl px-6 py-10">
@@ -100,6 +84,9 @@ function Index() {
               <Field label="Cash Outflow at Year 0 (CO) ₹">
                 <NumInput value={co} onChange={setCo} />
               </Field>
+              <Field label="One-time Capex ₹">
+                <NumInput value={capex} onChange={setCapex} />
+              </Field>
               <Field label="RO Type">
                 <div className="flex gap-2">
                   {(["new", "existing"] as const).map((t) => (
@@ -119,41 +106,53 @@ function Index() {
                 </div>
               </Field>
               <Field label="Number of years (Year 0 is start)">
-                <NumInput value={years} onChange={setYearCount} min={1} max={30} />
+                <NumInput value={years} onChange={setYears} min={1} max={30} />
               </Field>
             </div>
           </div>
 
-          {/* Yearly */}
+          {/* Annual inputs */}
           <div className="rounded-2xl border bg-card p-6 shadow-sm">
             <div className="flex items-center justify-between">
-              <h2 className="text-lg font-semibold">Year-by-year cash flows</h2>
-              <span className="text-xs text-muted-foreground">All figures in INR</span>
+              <h2 className="text-lg font-semibold">Annual operating cash flows</h2>
+              <span className="text-xs text-muted-foreground">These repeat every year</span>
+            </div>
+            <div className="mt-4 grid gap-4 md:grid-cols-2">
+              <Field label="Project Sales (annual) ₹">
+                <NumInput value={annualSales} onChange={setAnnualSales} />
+              </Field>
+              <Field label="NFR Income (annual) ₹">
+                <NumInput value={annualNfr} onChange={setAnnualNfr} />
+              </Field>
+              <Field label="Revenue Expenses (annual) ₹">
+                <NumInput value={annualRevenueExp} onChange={setAnnualRevenueExp} />
+              </Field>
+              <Field label="Income Tax Benefit (annual) ₹">
+                <NumInput value={annualTaxBenefit} onChange={setAnnualTaxBenefit} />
+              </Field>
+            </div>
+          </div>
+
+          {/* Yearly breakdown (auto-generated) */}
+          <div className="rounded-2xl border bg-card p-6 shadow-sm">
+            <div className="flex items-center justify-between">
+              <h2 className="text-lg font-semibold">Year-by-year breakdown</h2>
+              <span className="text-xs text-muted-foreground">Auto-generated from annual values</span>
             </div>
             <div className="mt-4 overflow-x-auto">
-              <table className="w-full min-w-[760px] text-sm">
+              <table className="w-full min-w-[500px] text-sm">
                 <thead>
                   <tr className="text-left text-xs uppercase tracking-wide text-muted-foreground">
                     <th className="py-2 pr-3">Year</th>
-                    <th className="py-2 pr-3">Project Sales</th>
-                    <th className="py-2 pr-3">NFR Income</th>
-                    <th className="py-2 pr-3">Capex (Exp.)</th>
-                    <th className="py-2 pr-3">Revenue Exp.</th>
-                    <th className="py-2 pr-3">Tax Benefit</th>
                     <th className="py-2 pr-3 text-right">Net Cash Flow</th>
                   </tr>
                 </thead>
                 <tbody>
-                  {rows.map((r, i) => (
+                  {cashFlows.map((cf, i) => (
                     <tr key={i} className="border-t">
                       <td className="py-2 pr-3 font-medium">{i}</td>
-                      <td className="py-2 pr-3"><NumInput value={r.sales} onChange={(v) => updateRow(i, "sales", v)} compact /></td>
-                      <td className="py-2 pr-3"><NumInput value={r.nfr} onChange={(v) => updateRow(i, "nfr", v)} compact /></td>
-                      <td className="py-2 pr-3"><NumInput value={r.capex} onChange={(v) => updateRow(i, "capex", v)} compact /></td>
-                      <td className="py-2 pr-3"><NumInput value={r.revenueExp} onChange={(v) => updateRow(i, "revenueExp", v)} compact /></td>
-                      <td className="py-2 pr-3"><NumInput value={r.taxBenefit} onChange={(v) => updateRow(i, "taxBenefit", v)} compact /></td>
-                      <td className={`py-2 pr-3 text-right font-mono ${cashFlows[i] < 0 ? "text-destructive" : "text-foreground"}`}>
-                        {formatINR(cashFlows[i] || 0)}
+                      <td className={`py-2 pr-3 text-right font-mono ${cf < 0 ? "text-destructive" : "text-foreground"}`}>
+                        {formatINR(cf || 0)}
                       </td>
                     </tr>
                   ))}
@@ -189,7 +188,7 @@ function Index() {
                 <div className="mt-1 font-display text-5xl font-semibold">
                   {mirrValue == null ? "—" : `${(mirrValue * 100).toFixed(2)}%`}
                 </div>
-                <div className="mt-1 text-sm opacity-80">Reinvestment & finance rate: WACC</div>
+                <div className="mt-1 text-sm opacity-80">Reinvestment &amp; finance rate: WACC</div>
               </div>
 
               {decision && (
@@ -248,13 +247,11 @@ function NumInput({
   onChange,
   min,
   max,
-  compact,
 }: {
   value: number;
   onChange: (v: number) => void;
   min?: number;
   max?: number;
-  compact?: boolean;
 }) {
   return (
     <input
@@ -267,7 +264,7 @@ function NumInput({
         const v = parseFloat(e.target.value);
         onChange(Number.isFinite(v) ? v : 0);
       }}
-      className={`w-full rounded-lg border bg-background px-3 ${compact ? "py-1.5 text-sm" : "py-2"} font-mono outline-none ring-accent/40 transition focus:border-accent focus:ring-2`}
+      className="w-full rounded-lg border bg-background px-3 py-2 font-mono outline-none ring-accent/40 transition focus:border-accent focus:ring-2"
     />
   );
 }
