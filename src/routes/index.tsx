@@ -160,6 +160,16 @@ function Index() {
                 </tbody>
               </table>
             </div>
+            <div className="mt-6 flex justify-end">
+              <Button
+                type="button"
+                onClick={() => setShowResults(true)}
+                className="gap-2"
+              >
+                <Calculator className="size-4" />
+                Calculate MIRR
+              </Button>
+            </div>
           </div>
         </div>
 
