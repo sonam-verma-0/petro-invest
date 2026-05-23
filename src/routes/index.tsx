@@ -205,7 +205,16 @@ function Index() {
                   <div className="mt-1 font-display text-2xl font-semibold">{decision.label}</div>
                   <p className="mt-1 text-sm opacity-90">{decision.reason}</p>
                 </div>
+              {mirrValue == null && (
+                <div className="rounded-2xl border border-amber-500/30 bg-amber-500/10 p-5 text-sm text-amber-700 dark:text-amber-400">
+                  <div className="font-semibold">MIRR cannot be calculated</div>
+                  <p className="mt-1 opacity-90">
+                    {!hasNegative && "There is no initial investment (negative cash flow). Increase Capex or Cash Outflow at Year 0."}
+                    {hasNegative && !hasPositive && "There are no positive cash flows. Add Project Sales / NFR income."}
+                  </p>
+                </div>
               )}
+
 
               <div className="rounded-2xl border bg-card p-5 text-sm">
                 <Row label="NPV @ WACC" value={formatINR(npvValue || 0)} />
