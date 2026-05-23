@@ -1,6 +1,8 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
+import { Calculator } from "lucide-react";
 import { mirr, npv, formatINR } from "@/lib/finance";
+import { Button } from "@/components/ui/button";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -29,6 +31,7 @@ function Index() {
   const [years, setYears] = useState<number>(5);
   const wacc = 0.097;
   const [rows, setRows] = useState<YearRow[]>(() => Array.from({ length: 6 }, empty));
+  const [showResults, setShowResults] = useState(false);
 
   const setYearCount = (n: number) => {
     const clamped = Math.max(1, Math.min(30, n));
@@ -157,44 +160,65 @@ function Index() {
                 </tbody>
               </table>
             </div>
+            <div className="mt-6 flex justify-end">
+              <Button
+                type="button"
+                onClick={() => setShowResults(true)}
+                className="gap-2"
+              >
+                <Calculator className="size-4" />
+                Calculate MIRR
+              </Button>
+            </div>
           </div>
         </div>
 
         {/* Result */}
         <aside className="space-y-4 lg:sticky lg:top-6 self-start">
-          <div className="rounded-2xl border bg-primary p-6 text-primary-foreground shadow-sm">
-            <div className="text-xs uppercase tracking-wide opacity-70">Modified IRR</div>
-            <div className="mt-1 font-display text-5xl font-semibold">
-              {mirrValue == null ? "—" : `${(mirrValue * 100).toFixed(2)}%`}
+          {!showResults ? (
+            <div className="rounded-2xl border bg-card p-8 text-center">
+              <Calculator className="mx-auto size-8 text-muted-foreground" />
+              <p className="mt-3 text-sm text-muted-foreground">
+                Fill in the cash flows and click <span className="font-medium text-foreground">Calculate MIRR</span> to see the analysis.
+              </p>
             </div>
-            <div className="mt-1 text-sm opacity-80">Reinvestment & finance rate: WACC</div>
-          </div>
+          ) : (
+            <>
+              <div className="rounded-2xl border bg-primary p-6 text-primary-foreground shadow-sm">
+                <div className="text-xs uppercase tracking-wide opacity-70">Modified IRR</div>
+                <div className="mt-1 font-display text-5xl font-semibold">
+                  {mirrValue == null ? "—" : `${(mirrValue * 100).toFixed(2)}%`}
+                </div>
+                <div className="mt-1 text-sm opacity-80">Reinvestment & finance rate: WACC</div>
+              </div>
 
-          {decision && (
-            <div
-              className={`rounded-2xl border p-5 ${
-                decision.tone === "success"
-                  ? "bg-success/10 border-success/30 text-success"
-                  : "bg-destructive/10 border-destructive/30 text-destructive"
-              }`}
-            >
-              <div className="text-xs uppercase tracking-wide">Recommendation</div>
-              <div className="mt-1 font-display text-2xl font-semibold">{decision.label}</div>
-              <p className="mt-1 text-sm opacity-90">{decision.reason}</p>
-            </div>
+              {decision && (
+                <div
+                  className={`rounded-2xl border p-5 ${
+                    decision.tone === "success"
+                      ? "bg-success/10 border-success/30 text-success"
+                      : "bg-destructive/10 border-destructive/30 text-destructive"
+                  }`}
+                >
+                  <div className="text-xs uppercase tracking-wide">Recommendation</div>
+                  <div className="mt-1 font-display text-2xl font-semibold">{decision.label}</div>
+                  <p className="mt-1 text-sm opacity-90">{decision.reason}</p>
+                </div>
+              )}
+
+              <div className="rounded-2xl border bg-card p-5 text-sm">
+                <Row label="NPV @ WACC" value={formatINR(npvValue || 0)} />
+                <Row label="RO Type" value={roType === "new" ? "New RO" : "Existing RO"} />
+                <Row label="Horizon" value={`${years} year${years > 1 ? "s" : ""}`} />
+                <Row label="Hurdle Rate" value={`${(wacc * 100).toFixed(1)}%`} />
+              </div>
+
+              <p className="text-xs text-muted-foreground">
+                MIRR assumes positive cash flows are reinvested at WACC and financed at WACC.
+                A project is acceptable when MIRR &gt; WACC.
+              </p>
+            </>
           )}
-
-          <div className="rounded-2xl border bg-card p-5 text-sm">
-            <Row label="NPV @ WACC" value={formatINR(npvValue || 0)} />
-            <Row label="RO Type" value={roType === "new" ? "New RO" : "Existing RO"} />
-            <Row label="Horizon" value={`${years} year${years > 1 ? "s" : ""}`} />
-            <Row label="Hurdle Rate" value={`${(wacc * 100).toFixed(1)}%`} />
-          </div>
-
-          <p className="text-xs text-muted-foreground">
-            MIRR assumes positive cash flows are reinvested at WACC and financed at WACC.
-            A project is acceptable when MIRR &gt; WACC.
-          </p>
         </aside>
       </section>
     </main>
