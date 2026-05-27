@@ -82,8 +82,8 @@ function Index() {
           <div className="rounded-2xl border bg-card p-6 shadow-sm">
             <h2 className="text-lg font-semibold">Project setup</h2>
             <div className="mt-4 grid gap-4 md:grid-cols-2">
-              <Field label="Cash Inflow at Year 0 (CI) ₹"><NumInput value={ci} onChange={setCi} /></Field>
-              <Field label="Cash Outflow at Year 0 (CO) ₹"><NumInput value={co} onChange={setCo} /></Field>
+              <Field label="Cumulative Cash Inflow (CI) ₹"><NumInput value={ci} onChange={setCi} /></Field>
+              <Field label="Cumulative Cash Outflow (CO) ₹"><NumInput value={co} onChange={setCo} /></Field>
               <Field label="One-time Capex ₹"><NumInput value={capex} onChange={setCapex} /></Field>
               <Field label="RO Type">
                 <div className="flex gap-2">
