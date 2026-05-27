@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 export const Route = createFileRoute("/")({
   head: () => ({
       meta: [
-      { title: "RO Investment Analyzer — MIRR for Indian Oil Projects" },
+      { title: "PETRO INVEST — MIRR for Indian Oil Projects" },
       { name: "description", content: "Evaluate Retail Outlet (RO) projects with MIRR, IRR, NPV and payback." },
     ],
   }),
@@ -67,7 +67,7 @@ function Index() {
           <div className="inline-flex items-center gap-2 rounded-full bg-accent/10 px-3 py-1 text-xs font-medium text-accent">
             <span className="size-1.5 rounded-full bg-accent" /> Capital Budgeting · Retail Outlet
           </div>
-          <h1 className="mt-3 text-4xl font-semibold text-foreground md:text-5xl">RO Investment Analyzer</h1>
+          <h1 className="mt-3 text-4xl font-semibold text-foreground md:text-5xl">PETRO INVEST</h1>
           <p className="mt-2 max-w-2xl text-muted-foreground">
             Decide whether to invest in a new or existing retail outlet project using MIRR, IRR, NPV and payback.
           </p>
