@@ -167,7 +167,15 @@ function Index() {
             </div>
           ) : (
             <>
-              <div className="rounded-2xl border bg-primary p-6 text-primary-foreground shadow-sm">
+              <div
+                className={`rounded-2xl border p-6 shadow-sm ${
+                  mirrValue == null
+                    ? "bg-primary text-primary-foreground"
+                    : mirrValue >= hurdleRate
+                    ? "bg-success text-success-foreground"
+                    : "bg-destructive text-destructive-foreground"
+                }`}
+              >
                 <div className="text-xs uppercase tracking-wide opacity-70">Modified IRR</div>
                 <div className="mt-1 font-display text-5xl font-semibold">
                   {mirrValue == null ? "—" : `${(mirrValue * 100).toFixed(2)}%`}
