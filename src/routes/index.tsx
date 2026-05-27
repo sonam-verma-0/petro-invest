@@ -38,13 +38,12 @@ function Index() {
     const flows: number[] = [];
     // Year 0: initial investment only — negative outflow
     flows.push(-(n(co) + n(capex)));
-    // Years 1..yearsN: recurring operating cash inflow (CI spread across years + annual ops)
-    const ciPerYear = yearsN > 0 ? n(ci) / yearsN : 0;
+    // Years 1..yearsN: annual operating cash flow only
     const annualNet =
-      ciPerYear + n(annualSales) + n(annualNfr) + n(annualTaxBenefit) - n(annualRevenueExp);
+      n(annualSales) + n(annualNfr) + n(annualTaxBenefit) - n(annualRevenueExp);
     for (let i = 1; i <= yearsN; i++) flows.push(annualNet);
     return flows;
-  }, [yearsN, ci, co, capex, annualSales, annualNfr, annualRevenueExp, annualTaxBenefit]);
+  }, [yearsN, co, capex, annualSales, annualNfr, annualRevenueExp, annualTaxBenefit]);
 
   const hasNegative = cashFlows.some((v) => v < 0);
   const hasPositive = cashFlows.some((v) => v > 0);
@@ -56,9 +55,9 @@ function Index() {
 
   const decision = mirrValue == null
     ? null
-    : mirrValue > hurdleRate
-    ? { label: "Invest", tone: "success" as const, reason: `MIRR ${(mirrValue * 100).toFixed(2)}% exceeds hurdle rate ${(hurdleRate * 100).toFixed(2)}%.` }
-    : { label: "Do Not Invest", tone: "destructive" as const, reason: `MIRR ${(mirrValue * 100).toFixed(2)}% is below hurdle rate ${(hurdleRate * 100).toFixed(2)}%.` };
+    : mirrValue >= hurdleRate
+    ? { label: "INVEST", tone: "success" as const, reason: `MIRR ${(mirrValue * 100).toFixed(2)}% meets or exceeds hurdle rate ${(hurdleRate * 100).toFixed(2)}%.` }
+    : { label: "REJECT", tone: "destructive" as const, reason: `MIRR ${(mirrValue * 100).toFixed(2)}% is below hurdle rate ${(hurdleRate * 100).toFixed(2)}%.` };
 
   return (
     <main className="mx-auto max-w-7xl px-6 py-10">
@@ -168,7 +167,15 @@ function Index() {
             </div>
           ) : (
             <>
-              <div className="rounded-2xl border bg-primary p-6 text-primary-foreground shadow-sm">
+              <div
+                className={`rounded-2xl border p-6 shadow-sm ${
+                  mirrValue == null
+                    ? "bg-primary text-primary-foreground"
+                    : mirrValue >= hurdleRate
+                    ? "bg-success text-success-foreground"
+                    : "bg-destructive text-destructive-foreground"
+                }`}
+              >
                 <div className="text-xs uppercase tracking-wide opacity-70">Modified IRR</div>
                 <div className="mt-1 font-display text-5xl font-semibold">
                   {mirrValue == null ? "—" : `${(mirrValue * 100).toFixed(2)}%`}
