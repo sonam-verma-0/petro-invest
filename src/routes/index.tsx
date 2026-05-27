@@ -101,15 +101,10 @@ function Index() {
               <Field label="Number of years (Year 0 is start)">
                 <NumInput value={years} onChange={setYears} min={1} max={30} />
               </Field>
-              <Field label={`Hurdle Rate % (must be > WACC ${(wacc * 100).toFixed(1)}%)`}>
+              <Field label="Hurdle Rate %">
                 <NumInput value={hurdleRatePct} onChange={setHurdleRatePct} min={0} max={100} step="0.1" />
               </Field>
             </div>
-            {hurdleRate <= wacc && (
-              <p className="mt-3 text-xs text-amber-600 dark:text-amber-400">
-                Hurdle rate should be higher than the WACC of {(wacc * 100).toFixed(1)}% to include a risk premium.
-              </p>
-            )}
           </div>
 
           <div className="rounded-2xl border bg-card p-6 shadow-sm">
