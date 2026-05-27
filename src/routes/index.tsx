@@ -6,9 +6,9 @@ import { Button } from "@/components/ui/button";
 
 export const Route = createFileRoute("/")({
   head: () => ({
-    meta: [
+      meta: [
       { title: "RO Investment Analyzer — MIRR for Indian Oil Projects" },
-      { name: "description", content: "Evaluate Retail Outlet (RO) projects with MIRR, IRR, NPV and payback against a hurdle rate above WACC." },
+      { name: "description", content: "Evaluate Retail Outlet (RO) projects with MIRR, IRR, NPV and payback." },
     ],
   }),
   component: Index,
