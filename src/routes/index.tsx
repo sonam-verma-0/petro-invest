@@ -36,11 +36,12 @@ function Index() {
 
   const cashFlows = useMemo(() => {
     const flows: number[] = [];
-    // Year 0: initial investment (CI - CO - Capex)
-    flows.push(n(ci) - n(co) - n(capex));
-    // Years 1..yearsN: recurring operating cash flow
+    // Year 0: initial investment only — negative outflow
+    flows.push(-(n(co) + n(capex)));
+    // Years 1..yearsN: recurring operating cash inflow (CI spread across years + annual ops)
+    const ciPerYear = yearsN > 0 ? n(ci) / yearsN : 0;
     const annualNet =
-      n(annualSales) + n(annualNfr) + n(annualTaxBenefit) - n(annualRevenueExp);
+      ciPerYear + n(annualSales) + n(annualNfr) + n(annualTaxBenefit) - n(annualRevenueExp);
     for (let i = 1; i <= yearsN; i++) flows.push(annualNet);
     return flows;
   }, [yearsN, ci, co, capex, annualSales, annualNfr, annualRevenueExp, annualTaxBenefit]);
