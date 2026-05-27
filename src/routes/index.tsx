@@ -55,9 +55,9 @@ function Index() {
 
   const decision = mirrValue == null
     ? null
-    : mirrValue > hurdleRate
-    ? { label: "Invest", tone: "success" as const, reason: `MIRR ${(mirrValue * 100).toFixed(2)}% exceeds hurdle rate ${(hurdleRate * 100).toFixed(2)}%.` }
-    : { label: "Do Not Invest", tone: "destructive" as const, reason: `MIRR ${(mirrValue * 100).toFixed(2)}% is below hurdle rate ${(hurdleRate * 100).toFixed(2)}%.` };
+    : mirrValue >= hurdleRate
+    ? { label: "INVEST", tone: "success" as const, reason: `MIRR ${(mirrValue * 100).toFixed(2)}% meets or exceeds hurdle rate ${(hurdleRate * 100).toFixed(2)}%.` }
+    : { label: "REJECT", tone: "destructive" as const, reason: `MIRR ${(mirrValue * 100).toFixed(2)}% is below hurdle rate ${(hurdleRate * 100).toFixed(2)}%.` };
 
   return (
     <main className="mx-auto max-w-7xl px-6 py-10">
