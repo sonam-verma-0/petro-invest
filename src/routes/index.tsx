@@ -50,8 +50,18 @@ function Index() {
   const [projectName, setProjectName] = useState<string>("New RO Project");
   const [roType, setRoType] = useState<"existing" | "new">("new");
   const [years, setYears] = useState<number | "">(5);
-  const [capex, setCapex] = useState<number | "">("");
 
+  // Unit selector: all monetary inputs are interpreted in this unit.
+  // Math is unit-agnostic but display & expected outputs assume Crore.
+  const [unit, setUnit] = useState<"cr" | "lakh" | "rupee">("cr");
+  const unitMultiplier = unit === "cr" ? 1e7 : unit === "lakh" ? 1e5 : 1;
+
+  // Simple mode lets the user enter the annual net cash flow directly,
+  // bypassing the Sales / NFR / Expenses / Tax breakdown.
+  const [simpleMode, setSimpleMode] = useState<boolean>(true);
+  const [directAnnualNet, setDirectAnnualNet] = useState<number | "">("");
+
+  const [capex, setCapex] = useState<number | "">("");
   const [annualSales, setAnnualSales] = useState<number | "">("");
   const [annualNfr, setAnnualNfr] = useState<number | "">("");
   const [annualRevenueExp, setAnnualRevenueExp] = useState<number | "">("");
@@ -72,14 +82,18 @@ function Index() {
   const hurdleRate = n(hurdleRatePct) / 100;
   const yearsN = Math.max(0, Math.floor(n(years)));
 
-  const annualNet =
-    n(annualSales) + n(annualNfr) + n(annualTaxBenefit) - n(annualRevenueExp);
+  // Compute annual net cash flow (in selected unit), then convert to rupees.
+  const annualNetUser = simpleMode
+    ? n(directAnnualNet)
+    : n(annualSales) + n(annualNfr) + n(annualTaxBenefit) - n(annualRevenueExp);
+  const annualNet = annualNetUser * unitMultiplier;
+  const capexRupees = n(capex) * unitMultiplier;
 
   const cashFlows = useMemo(() => {
-    const flows: number[] = [-n(capex)];
+    const flows: number[] = [-capexRupees];
     for (let i = 1; i <= yearsN; i++) flows.push(annualNet);
     return flows;
-  }, [yearsN, capex, annualNet]);
+  }, [yearsN, capexRupees, annualNet]);
 
   const hasNegative = cashFlows.some((v) => v < 0);
   const hasPositive = cashFlows.some((v) => v > 0);
@@ -91,6 +105,23 @@ function Index() {
   const irrValue = useMemo(() => irr(cashFlows), [cashFlows]);
   const npvValue = useMemo(() => npv(wacc, cashFlows), [cashFlows, wacc]);
   const payback = useMemo(() => paybackPeriod(cashFlows), [cashFlows]);
+
+  // Debug output so the formulas can be verified step-by-step.
+  if (typeof window !== "undefined") {
+    // eslint-disable-next-line no-console
+    console.log("[PETRO INVEST] debug", {
+      unit,
+      unitMultiplier,
+      ratesDecimal: { wacc, financeRate, reinvestRate, hurdleRate },
+      cashFlowsRupees: cashFlows,
+      cashFlowsInUnit: cashFlows.map((v) => v / unitMultiplier),
+      mirr: mirrValue,
+      irr: irrValue,
+      npv: npvValue,
+      payback,
+    });
+  }
+
 
   const decision =
     mirrValue == null
