@@ -151,7 +151,7 @@ function Index() {
             <div className="mt-6 flex justify-end">
               <Button type="button" onClick={() => setShowResults(true)} className="gap-2">
                 <Calculator className="size-4" />
-                Calculate
+                Calculate MIRR
               </Button>
             </div>
           </div>
