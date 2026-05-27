@@ -36,9 +36,12 @@ function Index() {
 
   const cashFlows = useMemo(() => {
     const flows: number[] = [];
-    flows.push(n(ci) - n(co) - n(capex));
-    const annualNet = n(annualSales) + n(annualNfr) + n(annualTaxBenefit) - n(annualRevenueExp);
-    for (let i = 1; i <= yearsN; i++) flows.push(annualNet);
+    // Year 0: initial investment only (capex)
+    flows.push(-n(capex));
+    // Years 1..(yearsN-1): recurring inflows (CI, sales, NFR, tax benefit) minus outflows (CO, revenue expenses)
+    const annualNet =
+      n(ci) + n(annualSales) + n(annualNfr) + n(annualTaxBenefit) - n(co) - n(annualRevenueExp);
+    for (let i = 1; i < yearsN; i++) flows.push(annualNet);
     return flows;
   }, [yearsN, ci, co, capex, annualSales, annualNfr, annualRevenueExp, annualTaxBenefit]);
 
@@ -79,8 +82,8 @@ function Index() {
           <div className="rounded-2xl border bg-card p-6 shadow-sm">
             <h2 className="text-lg font-semibold">Project setup</h2>
             <div className="mt-4 grid gap-4 md:grid-cols-2">
-              <Field label="Cash Inflow at Year 0 (CI) ₹"><NumInput value={ci} onChange={setCi} /></Field>
-              <Field label="Cash Outflow at Year 0 (CO) ₹"><NumInput value={co} onChange={setCo} /></Field>
+              <Field label="Cash Inflow (annual) ₹"><NumInput value={ci} onChange={setCi} /></Field>
+              <Field label="Cash Outflow (annual) ₹"><NumInput value={co} onChange={setCo} /></Field>
               <Field label="One-time Capex ₹"><NumInput value={capex} onChange={setCapex} /></Field>
               <Field label="RO Type">
                 <div className="flex gap-2">
@@ -98,7 +101,7 @@ function Index() {
                   ))}
                 </div>
               </Field>
-              <Field label="Number of years (Year 0 is start)">
+              <Field label="Number of years (includes Year 0)">
                 <NumInput value={years} onChange={setYears} min={1} max={30} />
               </Field>
               <Field label="Hurdle Rate %">
@@ -148,7 +151,7 @@ function Index() {
             <div className="mt-6 flex justify-end">
               <Button type="button" onClick={() => setShowResults(true)} className="gap-2">
                 <Calculator className="size-4" />
-                Calculate
+                Calculate MIRR
               </Button>
             </div>
           </div>
