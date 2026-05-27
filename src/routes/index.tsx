@@ -101,7 +101,7 @@ function Index() {
                   ))}
                 </div>
               </Field>
-              <Field label="Number of years (Year 0 is start)">
+              <Field label="Number of years (includes Year 0)">
                 <NumInput value={years} onChange={setYears} min={1} max={30} />
               </Field>
               <Field label="Hurdle Rate %">
