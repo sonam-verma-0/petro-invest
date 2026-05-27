@@ -65,7 +65,7 @@ function Index() {
           </div>
           <h1 className="mt-3 text-4xl font-semibold text-foreground md:text-5xl">RO Investment Analyzer</h1>
           <p className="mt-2 max-w-2xl text-muted-foreground">
-            Decide whether to invest in a new or existing retail outlet project using MIRR, IRR, NPV and payback against a hurdle rate above WACC.
+            Decide whether to invest in a new or existing retail outlet project using MIRR, IRR, NPV and payback.
           </p>
         </div>
         <div className="rounded-2xl border bg-card p-4 text-sm">
