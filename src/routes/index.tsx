@@ -6,9 +6,9 @@ import { Button } from "@/components/ui/button";
 
 export const Route = createFileRoute("/")({
   head: () => ({
-    meta: [
+      meta: [
       { title: "RO Investment Analyzer — MIRR for Indian Oil Projects" },
-      { name: "description", content: "Evaluate Retail Outlet (RO) projects with MIRR, IRR, NPV and payback against a hurdle rate above WACC." },
+      { name: "description", content: "Evaluate Retail Outlet (RO) projects with MIRR, IRR, NPV and payback." },
     ],
   }),
   component: Index,
@@ -65,7 +65,7 @@ function Index() {
           </div>
           <h1 className="mt-3 text-4xl font-semibold text-foreground md:text-5xl">RO Investment Analyzer</h1>
           <p className="mt-2 max-w-2xl text-muted-foreground">
-            Decide whether to invest in a new or existing retail outlet project using MIRR, IRR, NPV and payback against a hurdle rate above WACC.
+            Decide whether to invest in a new or existing retail outlet project using MIRR, IRR, NPV and payback.
           </p>
         </div>
         <div className="rounded-2xl border bg-card p-4 text-sm">
@@ -101,15 +101,10 @@ function Index() {
               <Field label="Number of years (Year 0 is start)">
                 <NumInput value={years} onChange={setYears} min={1} max={30} />
               </Field>
-              <Field label={`Hurdle Rate % (must be > WACC ${(wacc * 100).toFixed(1)}%)`}>
+              <Field label="Hurdle Rate %">
                 <NumInput value={hurdleRatePct} onChange={setHurdleRatePct} min={0} max={100} step="0.1" />
               </Field>
             </div>
-            {hurdleRate <= wacc && (
-              <p className="mt-3 text-xs text-amber-600 dark:text-amber-400">
-                Hurdle rate should be higher than the WACC of {(wacc * 100).toFixed(1)}% to include a risk premium.
-              </p>
-            )}
           </div>
 
           <div className="rounded-2xl border bg-card p-6 shadow-sm">
