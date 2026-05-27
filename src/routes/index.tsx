@@ -46,6 +46,11 @@ export const Route = createFileRoute("/")({
 
 type MetricKey = "mirr" | "irr" | "npv" | "payback" | "decision";
 
+function unitLabel(u: "cr" | "lakh" | "rupee") {
+  return u === "cr" ? "₹ Cr" : u === "lakh" ? "₹ Lakh" : "₹";
+}
+
+
 function Index() {
   const [projectName, setProjectName] = useState<string>("New RO Project");
   const [roType, setRoType] = useState<"existing" | "new">("new");
