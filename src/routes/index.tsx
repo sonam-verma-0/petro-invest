@@ -46,12 +46,27 @@ export const Route = createFileRoute("/")({
 
 type MetricKey = "mirr" | "irr" | "npv" | "payback" | "decision";
 
+function unitLabel(u: "cr" | "lakh" | "rupee") {
+  return u === "cr" ? "₹ Cr" : u === "lakh" ? "₹ Lakh" : "₹";
+}
+
+
 function Index() {
   const [projectName, setProjectName] = useState<string>("New RO Project");
   const [roType, setRoType] = useState<"existing" | "new">("new");
   const [years, setYears] = useState<number | "">(5);
-  const [capex, setCapex] = useState<number | "">("");
 
+  // Unit selector: all monetary inputs are interpreted in this unit.
+  // Math is unit-agnostic but display & expected outputs assume Crore.
+  const [unit, setUnit] = useState<"cr" | "lakh" | "rupee">("cr");
+  const unitMultiplier = unit === "cr" ? 1e7 : unit === "lakh" ? 1e5 : 1;
+
+  // Simple mode lets the user enter the annual net cash flow directly,
+  // bypassing the Sales / NFR / Expenses / Tax breakdown.
+  const [simpleMode, setSimpleMode] = useState<boolean>(true);
+  const [directAnnualNet, setDirectAnnualNet] = useState<number | "">("");
+
+  const [capex, setCapex] = useState<number | "">("");
   const [annualSales, setAnnualSales] = useState<number | "">("");
   const [annualNfr, setAnnualNfr] = useState<number | "">("");
   const [annualRevenueExp, setAnnualRevenueExp] = useState<number | "">("");
@@ -72,14 +87,18 @@ function Index() {
   const hurdleRate = n(hurdleRatePct) / 100;
   const yearsN = Math.max(0, Math.floor(n(years)));
 
-  const annualNet =
-    n(annualSales) + n(annualNfr) + n(annualTaxBenefit) - n(annualRevenueExp);
+  // Compute annual net cash flow (in selected unit), then convert to rupees.
+  const annualNetUser = simpleMode
+    ? n(directAnnualNet)
+    : n(annualSales) + n(annualNfr) + n(annualTaxBenefit) - n(annualRevenueExp);
+  const annualNet = annualNetUser * unitMultiplier;
+  const capexRupees = n(capex) * unitMultiplier;
 
   const cashFlows = useMemo(() => {
-    const flows: number[] = [-n(capex)];
+    const flows: number[] = [-capexRupees];
     for (let i = 1; i <= yearsN; i++) flows.push(annualNet);
     return flows;
-  }, [yearsN, capex, annualNet]);
+  }, [yearsN, capexRupees, annualNet]);
 
   const hasNegative = cashFlows.some((v) => v < 0);
   const hasPositive = cashFlows.some((v) => v > 0);
@@ -91,6 +110,23 @@ function Index() {
   const irrValue = useMemo(() => irr(cashFlows), [cashFlows]);
   const npvValue = useMemo(() => npv(wacc, cashFlows), [cashFlows, wacc]);
   const payback = useMemo(() => paybackPeriod(cashFlows), [cashFlows]);
+
+  // Debug output so the formulas can be verified step-by-step.
+  if (typeof window !== "undefined") {
+    // eslint-disable-next-line no-console
+    console.log("[PETRO INVEST] debug", {
+      unit,
+      unitMultiplier,
+      ratesDecimal: { wacc, financeRate, reinvestRate, hurdleRate },
+      cashFlowsRupees: cashFlows,
+      cashFlowsInUnit: cashFlows.map((v) => v / unitMultiplier),
+      mirr: mirrValue,
+      irr: irrValue,
+      npv: npvValue,
+      payback,
+    });
+  }
+
 
   const decision =
     mirrValue == null
@@ -177,37 +213,109 @@ function Index() {
 
             {/* Capex + Annual line items */}
             <div className="rounded-2xl border bg-card p-6 shadow-sm">
-              <h2 className="text-lg font-semibold">
-                Capex &amp; annual line items
-              </h2>
-              <p className="mt-1 text-xs text-muted-foreground">
-                Capex is a one-time Year 0 outflow. Other items repeat every
-                year.
-              </p>
+              <div className="flex items-start justify-between gap-4 flex-wrap">
+                <div>
+                  <h2 className="text-lg font-semibold">
+                    Capex &amp; annual cash flow
+                  </h2>
+                  <p className="mt-1 text-xs text-muted-foreground">
+                    Capex is a one-time Year 0 outflow. Annual values repeat
+                    each year (Year 1 to Year {yearsN}).
+                  </p>
+                </div>
+                <div className="flex items-center gap-2">
+                  <span className="text-xs text-muted-foreground">Unit:</span>
+                  {(
+                    [
+                      ["cr", "₹ Crore"],
+                      ["lakh", "₹ Lakh"],
+                      ["rupee", "₹"],
+                    ] as const
+                  ).map(([k, lbl]) => (
+                    <button
+                      key={k}
+                      type="button"
+                      onClick={() => setUnit(k)}
+                      className={`rounded-md border px-2.5 py-1 text-xs font-medium transition ${
+                        unit === k
+                          ? "border-accent bg-accent text-accent-foreground"
+                          : "bg-background hover:bg-muted"
+                      }`}
+                    >
+                      {lbl}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              <div className="mt-4 flex items-center gap-2 text-xs">
+                <button
+                  type="button"
+                  onClick={() => setSimpleMode(true)}
+                  className={`rounded-md border px-2.5 py-1 font-medium transition ${
+                    simpleMode
+                      ? "border-accent bg-accent text-accent-foreground"
+                      : "bg-background hover:bg-muted"
+                  }`}
+                >
+                  Simple (direct net CF)
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setSimpleMode(false)}
+                  className={`rounded-md border px-2.5 py-1 font-medium transition ${
+                    !simpleMode
+                      ? "border-accent bg-accent text-accent-foreground"
+                      : "bg-background hover:bg-muted"
+                  }`}
+                >
+                  Detailed (Sales / NFR / Tax / Expenses)
+                </button>
+              </div>
+
               <div className="mt-4 grid gap-4 md:grid-cols-2">
-                <Field label="Capex — Year 0 lump sum (₹)">
+                <Field label={`Capex — Year 0 lump sum (${unitLabel(unit)})`}>
                   <NumInput value={capex} onChange={setCapex} />
                 </Field>
-                <Field label="Project Sales — annual (₹)">
-                  <NumInput value={annualSales} onChange={setAnnualSales} />
-                </Field>
-                <Field label="NFR Income — annual (₹)">
-                  <NumInput value={annualNfr} onChange={setAnnualNfr} />
-                </Field>
-                <Field label="Revenue Expenditure — annual (₹)">
-                  <NumInput
-                    value={annualRevenueExp}
-                    onChange={setAnnualRevenueExp}
-                  />
-                </Field>
-                <Field label="Income Tax Benefit — annual (₹)">
-                  <NumInput
-                    value={annualTaxBenefit}
-                    onChange={setAnnualTaxBenefit}
-                  />
-                </Field>
+                {simpleMode ? (
+                  <Field
+                    label={`Annual Net Cash Flow (${unitLabel(unit)})`}
+                    tip="The single yearly net inflow repeated across all years."
+                  >
+                    <NumInput
+                      value={directAnnualNet}
+                      onChange={setDirectAnnualNet}
+                    />
+                  </Field>
+                ) : (
+                  <>
+                    <Field label={`Project Sales — annual (${unitLabel(unit)})`}>
+                      <NumInput value={annualSales} onChange={setAnnualSales} />
+                    </Field>
+                    <Field label={`NFR Income — annual (${unitLabel(unit)})`}>
+                      <NumInput value={annualNfr} onChange={setAnnualNfr} />
+                    </Field>
+                    <Field
+                      label={`Revenue Expenditure — annual (${unitLabel(unit)})`}
+                    >
+                      <NumInput
+                        value={annualRevenueExp}
+                        onChange={setAnnualRevenueExp}
+                      />
+                    </Field>
+                    <Field
+                      label={`Income Tax Benefit — annual (${unitLabel(unit)})`}
+                    >
+                      <NumInput
+                        value={annualTaxBenefit}
+                        onChange={setAnnualTaxBenefit}
+                      />
+                    </Field>
+                  </>
+                )}
               </div>
             </div>
+
 
             {/* Discount & hurdle rates */}
             <div className="rounded-2xl border bg-card p-6 shadow-sm">
