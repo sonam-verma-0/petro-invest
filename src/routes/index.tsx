@@ -38,13 +38,12 @@ function Index() {
     const flows: number[] = [];
     // Year 0: initial investment only — negative outflow
     flows.push(-(n(co) + n(capex)));
-    // Years 1..yearsN: recurring operating cash inflow (CI spread across years + annual ops)
-    const ciPerYear = yearsN > 0 ? n(ci) / yearsN : 0;
+    // Years 1..yearsN: annual operating cash flow only
     const annualNet =
-      ciPerYear + n(annualSales) + n(annualNfr) + n(annualTaxBenefit) - n(annualRevenueExp);
+      n(annualSales) + n(annualNfr) + n(annualTaxBenefit) - n(annualRevenueExp);
     for (let i = 1; i <= yearsN; i++) flows.push(annualNet);
     return flows;
-  }, [yearsN, ci, co, capex, annualSales, annualNfr, annualRevenueExp, annualTaxBenefit]);
+  }, [yearsN, co, capex, annualSales, annualNfr, annualRevenueExp, annualTaxBenefit]);
 
   const hasNegative = cashFlows.some((v) => v < 0);
   const hasPositive = cashFlows.some((v) => v > 0);
