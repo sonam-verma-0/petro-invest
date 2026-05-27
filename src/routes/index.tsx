@@ -32,16 +32,16 @@ function Index() {
 
   const n = (v: number | "") => (v === "" ? 0 : v);
   const hurdleRate = n(hurdleRatePct) / 100;
-  const yearsN = Math.max(1, Math.floor(n(years) || 1));
+  const yearsN = Math.max(0, Math.floor(n(years)));
 
   const cashFlows = useMemo(() => {
     const flows: number[] = [];
-    // Year 0: initial investment only (capex)
-    flows.push(-n(capex));
-    // Years 1..(yearsN-1): recurring inflows (CI, sales, NFR, tax benefit) minus outflows (CO, revenue expenses)
+    // Year 0: initial investment (CI - CO - Capex)
+    flows.push(n(ci) - n(co) - n(capex));
+    // Years 1..yearsN: recurring operating cash flow
     const annualNet =
-      n(ci) + n(annualSales) + n(annualNfr) + n(annualTaxBenefit) - n(co) - n(annualRevenueExp);
-    for (let i = 1; i < yearsN; i++) flows.push(annualNet);
+      n(annualSales) + n(annualNfr) + n(annualTaxBenefit) - n(annualRevenueExp);
+    for (let i = 1; i <= yearsN; i++) flows.push(annualNet);
     return flows;
   }, [yearsN, ci, co, capex, annualSales, annualNfr, annualRevenueExp, annualTaxBenefit]);
 
