@@ -594,6 +594,7 @@ function Index() {
             irrValue,
             npvValue,
             payback,
+            discountedPayback,
             wacc,
             financeRate,
             reinvestRate,
