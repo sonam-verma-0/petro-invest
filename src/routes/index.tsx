@@ -111,6 +111,10 @@ function Index() {
   const irrValue = useMemo(() => irr(cashFlows), [cashFlows]);
   const npvValue = useMemo(() => npv(wacc, cashFlows), [cashFlows, wacc]);
   const payback = useMemo(() => paybackPeriod(cashFlows), [cashFlows]);
+  const discountedPayback = useMemo(
+    () => discountedPaybackPeriod(cashFlows, wacc),
+    [cashFlows, wacc],
+  );
 
   // Debug output so the formulas can be verified step-by-step.
   if (typeof window !== "undefined") {
