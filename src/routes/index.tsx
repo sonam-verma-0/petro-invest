@@ -728,6 +728,7 @@ type ExplainerCtx = {
   yearsN: number;
   annualNet: number;
   capex: number;
+  fmt: (v: number) => string;
 };
 
 function ExplainerDialog({
