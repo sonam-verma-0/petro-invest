@@ -821,7 +821,7 @@ function MirrExplain({ ctx }: { ctx: ExplainerCtx }) {
               className={cf < 0 ? "text-destructive" : "text-success"}
             >
               Y{i} = {cf >= 0 ? "+" : ""}
-              {fmtCr(cf)}
+              {ctx.fmt(cf)}
             </li>
           ))}
         </ul>
@@ -832,10 +832,10 @@ function MirrExplain({ ctx }: { ctx: ExplainerCtx }) {
 Reinvest Rate    = ${(reinvestRate * 100).toFixed(2)}%
 n (periods)      = ${n}
 
-FV of positive   = ${fmtCr(fvPos)}
-PV of negative   = ${fmtCr(-pvNeg)}
+FV of positive   = ${ctx.fmt(fvPos)}
+PV of negative   = ${ctx.fmt(-pvNeg)}
 
-MIRR = ( ${fmtCr(fvPos)} / ${fmtCr(-pvNeg)} )^(1/${n}) − 1
+MIRR = ( ${ctx.fmt(fvPos)} / ${ctx.fmt(-pvNeg)} )^(1/${n}) − 1
      = ${mirrValue == null ? "—" : (mirrValue * 100).toFixed(2) + "%"}`}
         </Formula>
       </Section>
@@ -882,7 +882,7 @@ function IrrExplain({ ctx }: { ctx: ExplainerCtx }) {
       <Section title="Substituted values">
         <Formula>
           {`Cash flows:
-${cashFlows.map((cf, i) => `  Y${i} = ${cf >= 0 ? "+" : ""}${fmtCr(cf)}`).join("\n")}
+${cashFlows.map((cf, i) => `  Y${i} = ${cf >= 0 ? "+" : ""}${ctx.fmt(cf)}`).join("\n")}
 
 Solve numerically:
 IRR = ${irrValue == null ? "—" : (irrValue * 100).toFixed(2) + "%"}`}
@@ -895,7 +895,7 @@ IRR = ${irrValue == null ? "—" : (irrValue * 100).toFixed(2) + "%"}`}
 function NpvExplain({ ctx }: { ctx: ExplainerCtx }) {
   const { cashFlows, wacc, npvValue } = ctx;
   const terms = cashFlows.map(
-    (cf, i) => `  Y${i}: ${fmtCr(cf)} / (1 + ${wacc.toFixed(4)})^${i} = ${fmtCr(cf / Math.pow(1 + wacc, i))}`,
+    (cf, i) => `  Y${i}: ${ctx.fmt(cf)} / (1 + ${wacc.toFixed(4)})^${i} = ${ctx.fmt(cf / Math.pow(1 + wacc, i))}`,
   );
   return (
     <>
@@ -908,7 +908,7 @@ function NpvExplain({ ctx }: { ctx: ExplainerCtx }) {
 
 ${terms.join("\n")}
 
-NPV = ${fmtCr(npvValue)}`}
+NPV = ${ctx.fmt(npvValue)}`}
         </Formula>
       </Section>
       <Section title="Interpretation">
@@ -924,7 +924,7 @@ function PaybackExplain({ ctx }: { ctx: ExplainerCtx }) {
   let cum = 0;
   const rows = cashFlows.map((cf, i) => {
     cum += cf;
-    return `  Y${i}: CF=${fmtCr(cf)}   Cumulative=${fmtCr(cum)}`;
+    return `  Y${i}: CF=${ctx.fmt(cf)}   Cumulative=${ctx.fmt(cum)}`;
   });
   return (
     <>
