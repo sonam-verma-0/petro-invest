@@ -14,7 +14,7 @@ import {
   ReferenceLine,
   Cell,
 } from "recharts";
-import { mirr, npv, irr, paybackPeriod, formatINR } from "@/lib/finance";
+import { mirr, npv, irr, paybackPeriod } from "@/lib/finance";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -61,11 +61,6 @@ function Index() {
   const [unit, setUnit] = useState<"cr" | "lakh" | "rupee">("cr");
   const unitMultiplier = unit === "cr" ? 1e7 : unit === "lakh" ? 1e5 : 1;
 
-  // Simple mode lets the user enter the annual net cash flow directly,
-  // bypassing the Sales / NFR / Expenses / Tax breakdown.
-  const [simpleMode, setSimpleMode] = useState<boolean>(true);
-  const [directAnnualNet, setDirectAnnualNet] = useState<number | "">("");
-
   const [capex, setCapex] = useState<number | "">("");
   const [annualSales, setAnnualSales] = useState<number | "">("");
   const [annualNfr, setAnnualNfr] = useState<number | "">("");
@@ -87,12 +82,18 @@ function Index() {
   const hurdleRate = n(hurdleRatePct) / 100;
   const yearsN = Math.max(0, Math.floor(n(years)));
 
-  // Compute annual net cash flow (in selected unit), then convert to rupees.
-  const annualNetUser = simpleMode
-    ? n(directAnnualNet)
-    : n(annualSales) + n(annualNfr) + n(annualTaxBenefit) - n(annualRevenueExp);
+  // Annual net cash flow auto-derived from line items.
+  const annualNetUser =
+    n(annualSales) + n(annualNfr) + n(annualTaxBenefit) - n(annualRevenueExp);
   const annualNet = annualNetUser * unitMultiplier;
   const capexRupees = n(capex) * unitMultiplier;
+
+  // Unit-aware display formatter for rupee amounts.
+  const fmtUnit = (v: number) => {
+    const scaled = v / unitMultiplier;
+    const suffix = unit === "cr" ? " Cr" : unit === "lakh" ? " L" : "";
+    return `₹${scaled.toLocaleString("en-IN", { maximumFractionDigits: 2 })}${suffix}`;
+  };
 
   const cashFlows = useMemo(() => {
     const flows: number[] = [-capexRupees];
@@ -248,73 +249,46 @@ function Index() {
                 </div>
               </div>
 
-              <div className="mt-4 flex items-center gap-2 text-xs">
-                <button
-                  type="button"
-                  onClick={() => setSimpleMode(true)}
-                  className={`rounded-md border px-2.5 py-1 font-medium transition ${
-                    simpleMode
-                      ? "border-accent bg-accent text-accent-foreground"
-                      : "bg-background hover:bg-muted"
-                  }`}
-                >
-                  Simple (direct net CF)
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setSimpleMode(false)}
-                  className={`rounded-md border px-2.5 py-1 font-medium transition ${
-                    !simpleMode
-                      ? "border-accent bg-accent text-accent-foreground"
-                      : "bg-background hover:bg-muted"
-                  }`}
-                >
-                  Detailed (Sales / NFR / Tax / Expenses)
-                </button>
-              </div>
-
               <div className="mt-4 grid gap-4 md:grid-cols-2">
-                <Field label={`Capex — Year 0 lump sum (${unitLabel(unit)})`}>
+                <Field
+                  label={`Capex — Year 0 lump sum (${unitLabel(unit)})`}
+                  tip="Initial investment required at Year 0."
+                >
                   <NumInput value={capex} onChange={setCapex} />
                 </Field>
-                {simpleMode ? (
-                  <Field
-                    label={`Annual Net Cash Flow (${unitLabel(unit)})`}
-                    tip="The single yearly net inflow repeated across all years."
-                  >
-                    <NumInput
-                      value={directAnnualNet}
-                      onChange={setDirectAnnualNet}
-                    />
-                  </Field>
-                ) : (
-                  <>
-                    <Field label={`Project Sales — annual (${unitLabel(unit)})`}>
-                      <NumInput value={annualSales} onChange={setAnnualSales} />
-                    </Field>
-                    <Field label={`NFR Income — annual (${unitLabel(unit)})`}>
-                      <NumInput value={annualNfr} onChange={setAnnualNfr} />
-                    </Field>
-                    <Field
-                      label={`Revenue Expenditure — annual (${unitLabel(unit)})`}
-                    >
-                      <NumInput
-                        value={annualRevenueExp}
-                        onChange={setAnnualRevenueExp}
-                      />
-                    </Field>
-                    <Field
-                      label={`Income Tax Benefit — annual (${unitLabel(unit)})`}
-                    >
-                      <NumInput
-                        value={annualTaxBenefit}
-                        onChange={setAnnualTaxBenefit}
-                      />
-                    </Field>
-                  </>
-                )}
+                <Field
+                  label={`Project Sales — annual (${unitLabel(unit)})`}
+                  tip="Expected annual sales revenue."
+                >
+                  <NumInput value={annualSales} onChange={setAnnualSales} />
+                </Field>
+                <Field
+                  label={`NFR Income — annual (${unitLabel(unit)})`}
+                  tip="Non-fuel retail income generated annually."
+                >
+                  <NumInput value={annualNfr} onChange={setAnnualNfr} />
+                </Field>
+                <Field
+                  label={`Revenue Expenditure — annual (${unitLabel(unit)})`}
+                  tip="Annual operating expenses."
+                >
+                  <NumInput
+                    value={annualRevenueExp}
+                    onChange={setAnnualRevenueExp}
+                  />
+                </Field>
+                <Field
+                  label={`Income Tax Benefit — annual (${unitLabel(unit)})`}
+                  tip="Annual tax savings or tax benefits."
+                >
+                  <NumInput
+                    value={annualTaxBenefit}
+                    onChange={setAnnualTaxBenefit}
+                  />
+                </Field>
               </div>
             </div>
+
 
 
             {/* Discount & hurdle rates */}
@@ -390,13 +364,12 @@ function Index() {
                     />
                     <XAxis dataKey="year" />
                     <YAxis
-                      tickFormatter={(v) =>
-                        `${(Number(v) / 1e7).toFixed(1)} Cr`
-                      }
+                      tickFormatter={(v) => fmtUnit(Number(v))}
+                      width={80}
                     />
                     <RTooltip
                       formatter={(value: number, name) => [
-                        formatINR(value),
+                        fmtUnit(value),
                         name === "cashFlow" ? "Net cash flow" : "Cumulative",
                       ]}
                     />
@@ -440,12 +413,12 @@ function Index() {
                         <td
                           className={`py-2 pr-3 text-right font-mono ${d.cashFlow < 0 ? "text-destructive" : "text-success"}`}
                         >
-                          {formatINR(d.cashFlow || 0)}
+                          {fmtUnit(d.cashFlow || 0)}
                         </td>
                         <td
                           className={`py-2 pr-3 text-right font-mono ${d.cumulative < 0 ? "text-destructive" : "text-foreground"}`}
                         >
-                          {formatINR(d.cumulative || 0)}
+                          {fmtUnit(d.cumulative || 0)}
                         </td>
                       </tr>
                     ))}
@@ -550,7 +523,7 @@ function Index() {
                   />
                   <MetricCard
                     label={`NPV @ ${(wacc * 100).toFixed(1)}%`}
-                    value={formatINR(npvValue || 0)}
+                    value={fmtUnit(npvValue || 0)}
                     subtitle="Net Present Value"
                     positive={npvValue >= 0}
                     onClick={() => setOpenMetric("npv")}
@@ -567,7 +540,7 @@ function Index() {
                   />
                   <MetricCard
                     label="Annual Net CF"
-                    value={formatINR(annualNet || 0)}
+                    value={fmtUnit(annualNet || 0)}
                     subtitle="Sales+NFR+Tax−Expenses"
                     positive={annualNet >= 0}
                   />
@@ -624,6 +597,7 @@ function Index() {
             yearsN,
             annualNet,
             capex: n(capex),
+            fmt: fmtUnit,
           }}
         />
       </main>
@@ -754,6 +728,7 @@ type ExplainerCtx = {
   yearsN: number;
   annualNet: number;
   capex: number;
+  fmt: (v: number) => string;
 };
 
 function ExplainerDialog({
@@ -819,9 +794,6 @@ function Formula({ children }: { children: React.ReactNode }) {
   );
 }
 
-function fmtCr(v: number) {
-  return `${(v / 1e7).toFixed(2)} Cr`;
-}
 
 function MirrExplain({ ctx }: { ctx: ExplainerCtx }) {
   const { cashFlows, financeRate, reinvestRate, mirrValue, hurdleRate } = ctx;
@@ -846,7 +818,7 @@ function MirrExplain({ ctx }: { ctx: ExplainerCtx }) {
               className={cf < 0 ? "text-destructive" : "text-success"}
             >
               Y{i} = {cf >= 0 ? "+" : ""}
-              {fmtCr(cf)}
+              {ctx.fmt(cf)}
             </li>
           ))}
         </ul>
@@ -857,10 +829,10 @@ function MirrExplain({ ctx }: { ctx: ExplainerCtx }) {
 Reinvest Rate    = ${(reinvestRate * 100).toFixed(2)}%
 n (periods)      = ${n}
 
-FV of positive   = ${fmtCr(fvPos)}
-PV of negative   = ${fmtCr(-pvNeg)}
+FV of positive   = ${ctx.fmt(fvPos)}
+PV of negative   = ${ctx.fmt(-pvNeg)}
 
-MIRR = ( ${fmtCr(fvPos)} / ${fmtCr(-pvNeg)} )^(1/${n}) − 1
+MIRR = ( ${ctx.fmt(fvPos)} / ${ctx.fmt(-pvNeg)} )^(1/${n}) − 1
      = ${mirrValue == null ? "—" : (mirrValue * 100).toFixed(2) + "%"}`}
         </Formula>
       </Section>
@@ -907,7 +879,7 @@ function IrrExplain({ ctx }: { ctx: ExplainerCtx }) {
       <Section title="Substituted values">
         <Formula>
           {`Cash flows:
-${cashFlows.map((cf, i) => `  Y${i} = ${cf >= 0 ? "+" : ""}${fmtCr(cf)}`).join("\n")}
+${cashFlows.map((cf, i) => `  Y${i} = ${cf >= 0 ? "+" : ""}${ctx.fmt(cf)}`).join("\n")}
 
 Solve numerically:
 IRR = ${irrValue == null ? "—" : (irrValue * 100).toFixed(2) + "%"}`}
@@ -920,7 +892,7 @@ IRR = ${irrValue == null ? "—" : (irrValue * 100).toFixed(2) + "%"}`}
 function NpvExplain({ ctx }: { ctx: ExplainerCtx }) {
   const { cashFlows, wacc, npvValue } = ctx;
   const terms = cashFlows.map(
-    (cf, i) => `  Y${i}: ${fmtCr(cf)} / (1 + ${wacc.toFixed(4)})^${i} = ${fmtCr(cf / Math.pow(1 + wacc, i))}`,
+    (cf, i) => `  Y${i}: ${ctx.fmt(cf)} / (1 + ${wacc.toFixed(4)})^${i} = ${ctx.fmt(cf / Math.pow(1 + wacc, i))}`,
   );
   return (
     <>
@@ -933,7 +905,7 @@ function NpvExplain({ ctx }: { ctx: ExplainerCtx }) {
 
 ${terms.join("\n")}
 
-NPV = ${fmtCr(npvValue)}`}
+NPV = ${ctx.fmt(npvValue)}`}
         </Formula>
       </Section>
       <Section title="Interpretation">
@@ -949,7 +921,7 @@ function PaybackExplain({ ctx }: { ctx: ExplainerCtx }) {
   let cum = 0;
   const rows = cashFlows.map((cf, i) => {
     cum += cf;
-    return `  Y${i}: CF=${fmtCr(cf)}   Cumulative=${fmtCr(cum)}`;
+    return `  Y${i}: CF=${ctx.fmt(cf)}   Cumulative=${ctx.fmt(cum)}`;
   });
   return (
     <>
