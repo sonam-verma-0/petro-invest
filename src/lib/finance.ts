@@ -76,6 +76,20 @@ export function paybackPeriod(values: number[]): number | null {
   return cum >= 0 ? values.length - 1 : null;
 }
 
+// Discounted payback period in years using rate r. Returns null if never recovered.
+export function discountedPaybackPeriod(values: number[], r: number): number | null {
+  const discounted = values.map((v, i) => v / Math.pow(1 + r, i));
+  let cum = 0;
+  for (let i = 0; i < discounted.length; i++) {
+    const next = cum + discounted[i];
+    if (next >= 0 && cum < 0) {
+      return i - 1 + (-cum / discounted[i]);
+    }
+    cum = next;
+  }
+  return cum >= 0 ? discounted.length - 1 : null;
+}
+
 export function formatINR(n: number): string {
   return new Intl.NumberFormat("en-IN", { style: "currency", currency: "INR", maximumFractionDigits: 0 }).format(n);
 }
