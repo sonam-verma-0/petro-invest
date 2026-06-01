@@ -726,6 +726,7 @@ type ExplainerCtx = {
   irrValue: number | null;
   npvValue: number;
   payback: number | null;
+  discountedPayback: number | null;
   wacc: number;
   financeRate: number;
   reinvestRate: number;
