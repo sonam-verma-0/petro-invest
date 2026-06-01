@@ -61,11 +61,6 @@ function Index() {
   const [unit, setUnit] = useState<"cr" | "lakh" | "rupee">("cr");
   const unitMultiplier = unit === "cr" ? 1e7 : unit === "lakh" ? 1e5 : 1;
 
-  // Simple mode lets the user enter the annual net cash flow directly,
-  // bypassing the Sales / NFR / Expenses / Tax breakdown.
-  const [simpleMode, setSimpleMode] = useState<boolean>(true);
-  const [directAnnualNet, setDirectAnnualNet] = useState<number | "">("");
-
   const [capex, setCapex] = useState<number | "">("");
   const [annualSales, setAnnualSales] = useState<number | "">("");
   const [annualNfr, setAnnualNfr] = useState<number | "">("");
@@ -87,12 +82,18 @@ function Index() {
   const hurdleRate = n(hurdleRatePct) / 100;
   const yearsN = Math.max(0, Math.floor(n(years)));
 
-  // Compute annual net cash flow (in selected unit), then convert to rupees.
-  const annualNetUser = simpleMode
-    ? n(directAnnualNet)
-    : n(annualSales) + n(annualNfr) + n(annualTaxBenefit) - n(annualRevenueExp);
+  // Annual net cash flow auto-derived from line items.
+  const annualNetUser =
+    n(annualSales) + n(annualNfr) + n(annualTaxBenefit) - n(annualRevenueExp);
   const annualNet = annualNetUser * unitMultiplier;
   const capexRupees = n(capex) * unitMultiplier;
+
+  // Unit-aware display formatter for rupee amounts.
+  const fmtUnit = (v: number) => {
+    const scaled = v / unitMultiplier;
+    const suffix = unit === "cr" ? " Cr" : unit === "lakh" ? " L" : "";
+    return `₹${scaled.toLocaleString("en-IN", { maximumFractionDigits: 2 })}${suffix}`;
+  };
 
   const cashFlows = useMemo(() => {
     const flows: number[] = [-capexRupees];
