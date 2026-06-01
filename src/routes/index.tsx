@@ -413,12 +413,12 @@ function Index() {
                         <td
                           className={`py-2 pr-3 text-right font-mono ${d.cashFlow < 0 ? "text-destructive" : "text-success"}`}
                         >
-                          {formatINR(d.cashFlow || 0)}
+                          {fmtUnit(d.cashFlow || 0)}
                         </td>
                         <td
                           className={`py-2 pr-3 text-right font-mono ${d.cumulative < 0 ? "text-destructive" : "text-foreground"}`}
                         >
-                          {formatINR(d.cumulative || 0)}
+                          {fmtUnit(d.cumulative || 0)}
                         </td>
                       </tr>
                     ))}
