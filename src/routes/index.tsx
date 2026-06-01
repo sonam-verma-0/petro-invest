@@ -364,13 +364,12 @@ function Index() {
                     />
                     <XAxis dataKey="year" />
                     <YAxis
-                      tickFormatter={(v) =>
-                        `${(Number(v) / 1e7).toFixed(1)} Cr`
-                      }
+                      tickFormatter={(v) => fmtUnit(Number(v))}
+                      width={80}
                     />
                     <RTooltip
                       formatter={(value: number, name) => [
-                        formatINR(value),
+                        fmtUnit(value),
                         name === "cashFlow" ? "Net cash flow" : "Cumulative",
                       ]}
                     />
