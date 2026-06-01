@@ -249,73 +249,46 @@ function Index() {
                 </div>
               </div>
 
-              <div className="mt-4 flex items-center gap-2 text-xs">
-                <button
-                  type="button"
-                  onClick={() => setSimpleMode(true)}
-                  className={`rounded-md border px-2.5 py-1 font-medium transition ${
-                    simpleMode
-                      ? "border-accent bg-accent text-accent-foreground"
-                      : "bg-background hover:bg-muted"
-                  }`}
-                >
-                  Simple (direct net CF)
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setSimpleMode(false)}
-                  className={`rounded-md border px-2.5 py-1 font-medium transition ${
-                    !simpleMode
-                      ? "border-accent bg-accent text-accent-foreground"
-                      : "bg-background hover:bg-muted"
-                  }`}
-                >
-                  Detailed (Sales / NFR / Tax / Expenses)
-                </button>
-              </div>
-
               <div className="mt-4 grid gap-4 md:grid-cols-2">
-                <Field label={`Capex — Year 0 lump sum (${unitLabel(unit)})`}>
+                <Field
+                  label={`Capex — Year 0 lump sum (${unitLabel(unit)})`}
+                  tip="Initial investment required at Year 0."
+                >
                   <NumInput value={capex} onChange={setCapex} />
                 </Field>
-                {simpleMode ? (
-                  <Field
-                    label={`Annual Net Cash Flow (${unitLabel(unit)})`}
-                    tip="The single yearly net inflow repeated across all years."
-                  >
-                    <NumInput
-                      value={directAnnualNet}
-                      onChange={setDirectAnnualNet}
-                    />
-                  </Field>
-                ) : (
-                  <>
-                    <Field label={`Project Sales — annual (${unitLabel(unit)})`}>
-                      <NumInput value={annualSales} onChange={setAnnualSales} />
-                    </Field>
-                    <Field label={`NFR Income — annual (${unitLabel(unit)})`}>
-                      <NumInput value={annualNfr} onChange={setAnnualNfr} />
-                    </Field>
-                    <Field
-                      label={`Revenue Expenditure — annual (${unitLabel(unit)})`}
-                    >
-                      <NumInput
-                        value={annualRevenueExp}
-                        onChange={setAnnualRevenueExp}
-                      />
-                    </Field>
-                    <Field
-                      label={`Income Tax Benefit — annual (${unitLabel(unit)})`}
-                    >
-                      <NumInput
-                        value={annualTaxBenefit}
-                        onChange={setAnnualTaxBenefit}
-                      />
-                    </Field>
-                  </>
-                )}
+                <Field
+                  label={`Project Sales — annual (${unitLabel(unit)})`}
+                  tip="Expected annual sales revenue."
+                >
+                  <NumInput value={annualSales} onChange={setAnnualSales} />
+                </Field>
+                <Field
+                  label={`NFR Income — annual (${unitLabel(unit)})`}
+                  tip="Non-fuel retail income generated annually."
+                >
+                  <NumInput value={annualNfr} onChange={setAnnualNfr} />
+                </Field>
+                <Field
+                  label={`Revenue Expenditure — annual (${unitLabel(unit)})`}
+                  tip="Annual operating expenses."
+                >
+                  <NumInput
+                    value={annualRevenueExp}
+                    onChange={setAnnualRevenueExp}
+                  />
+                </Field>
+                <Field
+                  label={`Income Tax Benefit — annual (${unitLabel(unit)})`}
+                  tip="Annual tax savings or tax benefits."
+                >
+                  <NumInput
+                    value={annualTaxBenefit}
+                    onChange={setAnnualTaxBenefit}
+                  />
+                </Field>
               </div>
             </div>
+
 
 
             {/* Discount & hurdle rates */}
