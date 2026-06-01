@@ -923,23 +923,32 @@ NPV = ${ctx.fmt(npvValue)}`}
 }
 
 function PaybackExplain({ ctx }: { ctx: ExplainerCtx }) {
-  const { cashFlows, payback } = ctx;
+  const { cashFlows, payback, discountedPayback, wacc } = ctx;
   let cum = 0;
+  let dcum = 0;
   const rows = cashFlows.map((cf, i) => {
+    const df = 1 / Math.pow(1 + wacc, i);
+    const dcf = cf * df;
     cum += cf;
-    return `  Y${i}: CF=${ctx.fmt(cf)}   Cumulative=${ctx.fmt(cum)}`;
+    dcum += dcf;
+    return `  Y${i}: CF=${ctx.fmt(cf)}  DF=${df.toFixed(4)}  DCF=${ctx.fmt(dcf)}  Cum=${ctx.fmt(cum)}  DiscCum=${ctx.fmt(dcum)}`;
   });
   return (
     <>
-      <Section title="Formula">
+      <Section title="Formula — Non-discounted Payback">
         <Formula>{`Payback = year at which cumulative cash flow turns ≥ 0
-        (with linear interpolation within the year)`}</Formula>
+(with linear interpolation within the year)`}</Formula>
+      </Section>
+      <Section title="Formula — Discounted Payback">
+        <Formula>{`Discounted Payback = year at which Σ CFₜ / (1 + WACC)^t turns ≥ 0
+WACC = ${(wacc * 100).toFixed(2)}%`}</Formula>
       </Section>
       <Section title="Substituted values">
         <Formula>
           {`${rows.join("\n")}
 
-Payback = ${payback == null ? "Not recovered within horizon" : payback.toFixed(2) + " years"}`}
+Non-discounted Payback = ${payback == null ? "Not recovered within horizon" : payback.toFixed(2) + " years"}
+Discounted Payback     = ${discountedPayback == null ? "Not recovered within horizon" : discountedPayback.toFixed(2) + " years"}`}
         </Formula>
       </Section>
     </>
