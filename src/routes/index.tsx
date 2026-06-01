@@ -794,9 +794,6 @@ function Formula({ children }: { children: React.ReactNode }) {
   );
 }
 
-function fmtCr(v: number) {
-  return `${(v / 1e7).toFixed(2)} Cr`;
-}
 
 function MirrExplain({ ctx }: { ctx: ExplainerCtx }) {
   const { cashFlows, financeRate, reinvestRate, mirrValue, hurdleRate } = ctx;
