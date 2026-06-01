@@ -14,7 +14,7 @@ import {
   ReferenceLine,
   Cell,
 } from "recharts";
-import { mirr, npv, irr, paybackPeriod, formatINR } from "@/lib/finance";
+import { mirr, npv, irr, paybackPeriod } from "@/lib/finance";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
