@@ -597,6 +597,7 @@ function Index() {
             yearsN,
             annualNet,
             capex: n(capex),
+            fmt: fmtUnit,
           }}
         />
       </main>
