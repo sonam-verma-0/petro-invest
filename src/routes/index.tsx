@@ -523,7 +523,7 @@ function Index() {
                   />
                   <MetricCard
                     label={`NPV @ ${(wacc * 100).toFixed(1)}%`}
-                    value={formatINR(npvValue || 0)}
+                    value={fmtUnit(npvValue || 0)}
                     subtitle="Net Present Value"
                     positive={npvValue >= 0}
                     onClick={() => setOpenMetric("npv")}
@@ -540,7 +540,7 @@ function Index() {
                   />
                   <MetricCard
                     label="Annual Net CF"
-                    value={formatINR(annualNet || 0)}
+                    value={fmtUnit(annualNet || 0)}
                     subtitle="Sales+NFR+Tax−Expenses"
                     positive={annualNet >= 0}
                   />
