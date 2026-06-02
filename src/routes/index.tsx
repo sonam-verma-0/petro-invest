@@ -16,6 +16,7 @@ import {
 } from "recharts";
 import { mirr, npv, irr, paybackPeriod, discountedPaybackPeriod } from "@/lib/finance";
 import indianOilLogo from "@/assets/indianoil-logo.png.asset.json";
+import petroInvestLogo from "@/assets/petroinvest-logo.png.asset.json";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -34,11 +35,11 @@ import {
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "PETRO INVEST — MIRR for Indian Oil Projects" },
+      { title: "PETRO INVEST — Capital Budgeting & Investment Evaluator" },
       {
         name: "description",
         content:
-          "Evaluate Retail Outlet (RO) projects with MIRR, IRR, NPV and payback.",
+          "Transform project proposals into investment decisions through transparent financial analytics and risk-adjusted returns.",
       },
     ],
   }),
@@ -53,8 +54,8 @@ function unitLabel(u: "cr" | "lakh" | "rupee") {
 
 
 function Index() {
-  const [projectName, setProjectName] = useState<string>("New RO Project");
-  const [roType, setRoType] = useState<"existing" | "new">("new");
+  const [projectName, setProjectName] = useState<string>("New IOCL Project");
+  const [projectType, setProjectType] = useState<"existing" | "new">("new");
   const [years, setYears] = useState<number | "">(5);
 
   // Unit selector: all monetary inputs are interpreted in this unit.
@@ -163,18 +164,24 @@ function Index() {
   return (
     <TooltipProvider delayDuration={150}>
       <main className="mx-auto max-w-7xl px-6 py-10">
-        <header className="mb-10 flex items-start justify-between gap-4 flex-nowrap">
+        <header className="mb-12 flex items-start justify-between gap-6 flex-nowrap">
           <div className="min-w-0 flex-1">
-            <div className="inline-flex items-center gap-2 rounded-full bg-accent/10 px-3 py-1 text-xs font-medium text-accent">
-              <span className="size-1.5 rounded-full bg-accent" /> Capital
-              Budgeting · Retail Outlet
+            <h1 className="sr-only">PETRO INVEST</h1>
+            <img
+              src={petroInvestLogo.url}
+              alt="PETRO INVEST — Capital Budgeting & Investment Evaluator"
+              className="h-28 md:h-36 lg:h-40 w-auto object-contain object-left -ml-2"
+            />
+            <div className="mt-4 flex flex-wrap items-center gap-x-3 gap-y-1 text-sm font-semibold tracking-wide">
+              <span className="text-primary">Evaluate<span className="text-accent">.</span></span>
+              <span className="text-accent/40">|</span>
+              <span className="text-primary">Analyze<span className="text-accent">.</span></span>
+              <span className="text-accent/40">|</span>
+              <span className="text-accent">Invest<span className="text-accent">.</span></span>
             </div>
-            <h1 className="mt-3 text-4xl font-semibold text-foreground md:text-5xl">
-              PETRO INVEST
-            </h1>
-            <p className="mt-2 max-w-2xl text-muted-foreground">
-              Evaluate Indian Oil retail outlet projects with MIRR, IRR, NPV and
-              payback — with transparent, click-to-explain calculations.
+            <p className="mt-4 max-w-2xl text-muted-foreground leading-relaxed">
+              Transform project proposals into investment decisions through
+              transparent financial analytics and risk-adjusted returns.
             </p>
           </div>
           <div className="shrink-0 flex items-center gap-3 rounded-2xl border bg-card/80 px-3 py-2 sm:px-4 sm:py-3 shadow-sm backdrop-blur">
@@ -211,20 +218,20 @@ function Index() {
                     className="w-full rounded-lg border bg-background px-3 py-2 outline-none ring-accent/40 transition focus:border-accent focus:ring-2"
                   />
                 </Field>
-                <Field label="RO Type">
+                <Field label="Project Type">
                   <div className="flex gap-2">
                     {(["new", "existing"] as const).map((t) => (
                       <button
                         key={t}
                         type="button"
-                        onClick={() => setRoType(t)}
+                        onClick={() => setProjectType(t)}
                         className={`flex-1 rounded-lg border px-3 py-2 text-sm font-medium capitalize transition ${
-                          roType === t
+                          projectType === t
                             ? "border-accent bg-accent text-accent-foreground"
                             : "bg-background hover:bg-muted"
                         }`}
                       >
-                        {t} RO
+                        {t} Project
                       </button>
                     ))}
                   </div>
@@ -572,8 +579,8 @@ function Index() {
                 <div className="rounded-2xl border bg-card p-5 text-sm">
                   <Row label="Project" value={projectName} />
                   <Row
-                    label="RO Type"
-                    value={roType === "new" ? "New RO" : "Existing RO"}
+                    label="Project Type"
+                    value={projectType === "new" ? "New Project" : "Existing Project"}
                   />
                   <Row
                     label="Horizon"
