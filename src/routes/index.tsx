@@ -15,6 +15,7 @@ import {
   Cell,
 } from "recharts";
 import { mirr, npv, irr, paybackPeriod, discountedPaybackPeriod } from "@/lib/finance";
+import indianOilLogo from "@/assets/indianoil-logo.png.asset.json";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
