@@ -177,6 +177,24 @@ function Index() {
               payback — with transparent, click-to-explain calculations.
             </p>
           </div>
+          <div className="flex items-center gap-3 rounded-2xl border bg-card/80 px-4 py-3 shadow-sm backdrop-blur">
+            <img
+              src={indianOilLogo.url}
+              alt="Indian Oil Corporation logo"
+              className="h-12 w-12 object-contain"
+            />
+            <div className="hidden sm:block border-l pl-3">
+              <div className="text-[10px] uppercase tracking-wider text-muted-foreground">
+                In association with
+              </div>
+              <div className="text-sm font-semibold text-foreground leading-tight">
+                Indian Oil
+              </div>
+              <div className="text-[10px] text-muted-foreground">
+                Corporation Ltd.
+              </div>
+            </div>
+          </div>
         </header>
 
         <section className="grid gap-6 lg:grid-cols-[1fr_400px]">
