@@ -163,8 +163,8 @@ function Index() {
   return (
     <TooltipProvider delayDuration={150}>
       <main className="mx-auto max-w-7xl px-6 py-10">
-        <header className="mb-10 flex items-start justify-between gap-6 flex-wrap">
-          <div>
+        <header className="mb-10 flex items-start justify-between gap-4 flex-nowrap">
+          <div className="min-w-0 flex-1">
             <div className="inline-flex items-center gap-2 rounded-full bg-accent/10 px-3 py-1 text-xs font-medium text-accent">
               <span className="size-1.5 rounded-full bg-accent" /> Capital
               Budgeting · Retail Outlet
@@ -177,13 +177,13 @@ function Index() {
               payback — with transparent, click-to-explain calculations.
             </p>
           </div>
-          <div className="flex items-center gap-3 rounded-2xl border bg-card/80 px-4 py-3 shadow-sm backdrop-blur">
+          <div className="shrink-0 flex items-center gap-3 rounded-2xl border bg-card/80 px-3 py-2 sm:px-4 sm:py-3 shadow-sm backdrop-blur">
             <img
               src={indianOilLogo.url}
               alt="Indian Oil Corporation logo"
-              className="h-12 w-12 object-contain"
+              className="h-10 w-10 sm:h-12 sm:w-12 object-contain"
             />
-            <div className="hidden sm:block border-l pl-3">
+            <div className="hidden md:block border-l pl-3">
               <div className="text-[10px] uppercase tracking-wider text-muted-foreground">
                 In association with
               </div>
