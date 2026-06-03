@@ -248,63 +248,58 @@ function Index() {
             </div>
 
             {/* Capex + Annual line items */}
-            <div className="rounded-2xl border bg-card p-6 shadow-sm">
-              <div className="flex items-start justify-between gap-4 flex-wrap">
-                <div>
-                  <h2 className="text-lg font-semibold">
-                    Capex &amp; annual cash flow
-                  </h2>
-                  <p className="mt-1 text-xs text-muted-foreground">
-                    Capex is a one-time Year 0 outflow. Annual values repeat
-                    each year (Year 1 to Year {yearsN}).
-                  </p>
-                </div>
-                <div className="flex items-center gap-2">
-                  <span className="text-xs text-muted-foreground">Unit:</span>
-                  {(
-                    [
-                      ["cr", "₹ Crore"],
-                      ["lakh", "₹ Lakh"],
-                      ["rupee", "₹"],
-                    ] as const
-                  ).map(([k, lbl]) => (
-                    <button
-                      key={k}
-                      type="button"
-                      onClick={() => setUnit(k)}
-                      className={`rounded-md border px-2.5 py-1 text-xs font-medium transition ${
-                        unit === k
-                          ? "border-accent bg-accent text-accent-foreground"
-                          : "bg-background hover:bg-muted"
-                      }`}
-                    >
-                      {lbl}
-                    </button>
-                  ))}
-                </div>
-              </div>
+            <div className="rounded-2xl border border-primary/10 bg-card p-6 shadow-sm">
+              <SectionHeader
+                title="Capex - Annual Cash Flow"
+                subtitle={`Capex is a one-time Year 0 outflow. Annual values repeat each year (Year 1 to Year ${yearsN}).`}
+                right={
+                  <div className="flex items-center gap-2">
+                    <span className="text-xs text-muted-foreground">Unit:</span>
+                    {(
+                      [
+                        ["cr", "₹ Crore"],
+                        ["lakh", "₹ Lakh"],
+                        ["rupee", "₹"],
+                      ] as const
+                    ).map(([k, lbl]) => (
+                      <button
+                        key={k}
+                        type="button"
+                        onClick={() => setUnit(k)}
+                        className={`rounded-md border px-2.5 py-1 text-xs font-medium transition ${
+                          unit === k
+                            ? "border-accent bg-accent text-accent-foreground"
+                            : "bg-background hover:bg-muted"
+                        }`}
+                      >
+                        {lbl}
+                      </button>
+                    ))}
+                  </div>
+                }
+              />
 
-              <div className="mt-4 grid gap-4 md:grid-cols-2">
+              <div className="mt-2 grid gap-4 md:grid-cols-2">
                 <Field
-                  label={`Capex — Year 0 lump sum (${unitLabel(unit)})`}
+                  label={`Capex - Year 0 lump sum (${unitLabel(unit)})`}
                   tip="Initial investment required at Year 0."
                 >
                   <NumInput value={capex} onChange={setCapex} />
                 </Field>
                 <Field
-                  label={`Project Sales — annual (${unitLabel(unit)})`}
+                  label={`Project Sales - annual (${unitLabel(unit)})`}
                   tip="Expected annual sales revenue."
                 >
                   <NumInput value={annualSales} onChange={setAnnualSales} />
                 </Field>
                 <Field
-                  label={`NFR Income — annual (${unitLabel(unit)})`}
+                  label={`NFR Income - annual (${unitLabel(unit)})`}
                   tip="Non-fuel retail income generated annually."
                 >
                   <NumInput value={annualNfr} onChange={setAnnualNfr} />
                 </Field>
                 <Field
-                  label={`Revenue Expenditure — annual (${unitLabel(unit)})`}
+                  label={`Revenue Expenditure - annual (${unitLabel(unit)})`}
                   tip="Annual operating expenses."
                 >
                   <NumInput
@@ -313,7 +308,7 @@ function Index() {
                   />
                 </Field>
                 <Field
-                  label={`Income Tax Benefit — annual (${unitLabel(unit)})`}
+                  label={`Income Tax Benefit - annual (${unitLabel(unit)})`}
                   tip="Annual tax savings or tax benefits."
                 >
                   <NumInput
