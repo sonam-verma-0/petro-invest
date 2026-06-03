@@ -172,29 +172,31 @@ function Index() {
               alt="PETRO INVEST — Capital Budgeting & Investment Evaluator"
               className="h-28 md:h-36 lg:h-40 w-auto object-contain object-left -ml-2"
             />
-            <div className="mt-4 flex flex-wrap items-center gap-x-3 gap-y-1 text-sm font-semibold tracking-wide">
-              <span className="text-primary">Evaluate<span className="text-accent">.</span></span>
-              <span className="text-accent/40">|</span>
-              <span className="text-primary">Analyze<span className="text-accent">.</span></span>
-              <span className="text-accent/40">|</span>
-              <span className="text-accent">Invest<span className="text-accent">.</span></span>
+            <div className="mt-1 flex items-center gap-2.5 text-[11px] md:text-xs font-semibold uppercase tracking-[0.25em] text-primary">
+              <span className="h-1.5 w-1.5 rounded-full bg-accent" />
+              <span>Evaluate</span>
+              <span className="text-accent">·</span>
+              <span>Analyze</span>
+              <span className="text-accent">·</span>
+              <span>Invest</span>
+              <span className="h-px flex-1 max-w-[80px] bg-gradient-to-r from-accent to-transparent" />
             </div>
-            <p className="mt-4 max-w-2xl text-muted-foreground leading-relaxed">
+            <p className="mt-5 max-w-2xl text-muted-foreground leading-relaxed">
               Transform project proposals into investment decisions through
               transparent financial analytics and risk-adjusted returns.
             </p>
           </div>
-          <div className="shrink-0 flex items-center gap-3 rounded-2xl border bg-card/80 px-3 py-2 sm:px-4 sm:py-3 shadow-sm backdrop-blur">
+          <div className="shrink-0 flex items-center gap-3 rounded-2xl border border-primary/15 bg-card/80 px-3 py-2 sm:px-4 sm:py-3 shadow-sm backdrop-blur">
             <img
               src={indianOilLogo.url}
               alt="Indian Oil Corporation logo"
               className="h-10 w-10 sm:h-12 sm:w-12 object-contain"
             />
-            <div className="hidden md:block border-l pl-3">
+            <div className="hidden md:block border-l border-primary/20 pl-3">
               <div className="text-[10px] uppercase tracking-wider text-muted-foreground">
                 In association with
               </div>
-              <div className="text-sm font-semibold text-foreground leading-tight">
+              <div className="text-sm font-semibold text-primary leading-tight">
                 Indian Oil
               </div>
               <div className="text-[10px] text-muted-foreground">
@@ -207,9 +209,12 @@ function Index() {
         <section className="grid gap-6 lg:grid-cols-[1fr_400px]">
           <div className="space-y-6">
             {/* Project details */}
-            <div className="rounded-2xl border bg-card p-6 shadow-sm">
-              <h2 className="text-lg font-semibold">Project details</h2>
-              <div className="mt-4 grid gap-4 md:grid-cols-2">
+            <div className="rounded-2xl border border-primary/10 bg-card p-6 shadow-sm">
+              <SectionHeader
+                title="Project Details"
+                subtitle="Identify the proposal and set the evaluation horizon."
+              />
+              <div className="mt-2 grid gap-4 md:grid-cols-2">
                 <Field label="Project Name">
                   <input
                     type="text"
@@ -243,63 +248,58 @@ function Index() {
             </div>
 
             {/* Capex + Annual line items */}
-            <div className="rounded-2xl border bg-card p-6 shadow-sm">
-              <div className="flex items-start justify-between gap-4 flex-wrap">
-                <div>
-                  <h2 className="text-lg font-semibold">
-                    Capex &amp; annual cash flow
-                  </h2>
-                  <p className="mt-1 text-xs text-muted-foreground">
-                    Capex is a one-time Year 0 outflow. Annual values repeat
-                    each year (Year 1 to Year {yearsN}).
-                  </p>
-                </div>
-                <div className="flex items-center gap-2">
-                  <span className="text-xs text-muted-foreground">Unit:</span>
-                  {(
-                    [
-                      ["cr", "₹ Crore"],
-                      ["lakh", "₹ Lakh"],
-                      ["rupee", "₹"],
-                    ] as const
-                  ).map(([k, lbl]) => (
-                    <button
-                      key={k}
-                      type="button"
-                      onClick={() => setUnit(k)}
-                      className={`rounded-md border px-2.5 py-1 text-xs font-medium transition ${
-                        unit === k
-                          ? "border-accent bg-accent text-accent-foreground"
-                          : "bg-background hover:bg-muted"
-                      }`}
-                    >
-                      {lbl}
-                    </button>
-                  ))}
-                </div>
-              </div>
+            <div className="rounded-2xl border border-primary/10 bg-card p-6 shadow-sm">
+              <SectionHeader
+                title="Capex - Annual Cash Flow"
+                subtitle={`Capex is a one-time Year 0 outflow. Annual values repeat each year (Year 1 to Year ${yearsN}).`}
+                right={
+                  <div className="flex items-center gap-2">
+                    <span className="text-xs text-muted-foreground">Unit:</span>
+                    {(
+                      [
+                        ["cr", "₹ Crore"],
+                        ["lakh", "₹ Lakh"],
+                        ["rupee", "₹"],
+                      ] as const
+                    ).map(([k, lbl]) => (
+                      <button
+                        key={k}
+                        type="button"
+                        onClick={() => setUnit(k)}
+                        className={`rounded-md border px-2.5 py-1 text-xs font-medium transition ${
+                          unit === k
+                            ? "border-accent bg-accent text-accent-foreground"
+                            : "bg-background hover:bg-muted"
+                        }`}
+                      >
+                        {lbl}
+                      </button>
+                    ))}
+                  </div>
+                }
+              />
 
-              <div className="mt-4 grid gap-4 md:grid-cols-2">
+              <div className="mt-2 grid gap-4 md:grid-cols-2">
                 <Field
-                  label={`Capex — Year 0 lump sum (${unitLabel(unit)})`}
+                  label={`Capex - Year 0 lump sum (${unitLabel(unit)})`}
                   tip="Initial investment required at Year 0."
                 >
                   <NumInput value={capex} onChange={setCapex} />
                 </Field>
                 <Field
-                  label={`Project Sales — annual (${unitLabel(unit)})`}
+                  label={`Project Sales - annual (${unitLabel(unit)})`}
                   tip="Expected annual sales revenue."
                 >
                   <NumInput value={annualSales} onChange={setAnnualSales} />
                 </Field>
                 <Field
-                  label={`NFR Income — annual (${unitLabel(unit)})`}
+                  label={`NFR Income - annual (${unitLabel(unit)})`}
                   tip="Non-fuel retail income generated annually."
                 >
                   <NumInput value={annualNfr} onChange={setAnnualNfr} />
                 </Field>
                 <Field
-                  label={`Revenue Expenditure — annual (${unitLabel(unit)})`}
+                  label={`Revenue Expenditure - annual (${unitLabel(unit)})`}
                   tip="Annual operating expenses."
                 >
                   <NumInput
@@ -308,7 +308,7 @@ function Index() {
                   />
                 </Field>
                 <Field
-                  label={`Income Tax Benefit — annual (${unitLabel(unit)})`}
+                  label={`Income Tax Benefit - annual (${unitLabel(unit)})`}
                   tip="Annual tax savings or tax benefits."
                 >
                   <NumInput
@@ -322,12 +322,15 @@ function Index() {
 
 
             {/* Discount & hurdle rates */}
-            <div className="rounded-2xl border bg-card p-6 shadow-sm">
-              <h2 className="text-lg font-semibold">Discount &amp; hurdle rates</h2>
-              <div className="mt-4 grid gap-4 md:grid-cols-2">
+            <div className="rounded-2xl border border-primary/10 bg-card p-6 shadow-sm">
+              <SectionHeader
+                title="Discount - Hurdle Rates"
+                subtitle="Cost of capital and the minimum return required to approve the investment."
+              />
+              <div className="mt-2 grid gap-4 md:grid-cols-2">
                 <Field
                   label="WACC %"
-                  tip="Weighted Average Cost of Capital — used to discount NPV."
+                  tip="Weighted Average Cost of Capital - used to discount NPV."
                 >
                   <NumInput
                     value={waccPct}
@@ -377,13 +380,16 @@ function Index() {
             </div>
 
             {/* Year-by-year table + chart */}
-            <div className="rounded-2xl border bg-card p-6 shadow-sm">
-              <div className="flex items-center justify-between">
-                <h2 className="text-lg font-semibold">Cash flow timeline</h2>
-                <span className="text-xs text-muted-foreground">
-                  Auto-generated
-                </span>
-              </div>
+            <div className="rounded-2xl border border-primary/10 bg-card p-6 shadow-sm">
+              <SectionHeader
+                title="Cash Flow Timeline"
+                right={
+                  <span className="text-xs text-muted-foreground">
+                    Auto-generated
+                  </span>
+                }
+              />
+
 
               <div className="mt-4 h-64 w-full">
                 <ResponsiveContainer width="100%" height="100%">
@@ -467,8 +473,17 @@ function Index() {
 
           {/* Results panel */}
           <aside className="space-y-4 lg:sticky lg:top-6 self-start">
+            <div className="flex items-center gap-3 px-1">
+              <span className="h-6 w-1 rounded-full bg-gradient-to-b from-accent to-primary" />
+              <h2 className="font-display text-xl font-semibold tracking-tight text-primary">
+                Results
+              </h2>
+              <span className="ml-auto text-[10px] uppercase tracking-[0.2em] text-muted-foreground">
+                Investment Verdict
+              </span>
+            </div>
             {!showResults ? (
-              <div className="rounded-2xl border bg-card p-8 text-center">
+              <div className="rounded-2xl border border-primary/10 bg-card p-8 text-center">
                 <Calculator className="mx-auto size-8 text-muted-foreground" />
                 <p className="mt-3 text-sm text-muted-foreground">
                   Fill in the cash flows and click{" "}
@@ -665,6 +680,33 @@ function Field({
   );
 }
 
+function SectionHeader({
+  title,
+  subtitle,
+  right,
+}: {
+  title: string;
+  subtitle?: string;
+  right?: React.ReactNode;
+}) {
+  return (
+    <div className="mb-5 flex items-start justify-between gap-4 border-b border-primary/10 pb-3">
+      <div className="flex items-start gap-3 min-w-0">
+        <span className="mt-1 h-6 w-1 rounded-full bg-gradient-to-b from-accent to-primary shrink-0" />
+        <div className="min-w-0">
+          <h2 className="font-display text-xl md:text-[1.35rem] font-semibold tracking-tight text-primary">
+            {title}
+          </h2>
+          {subtitle && (
+            <p className="mt-1 text-xs text-muted-foreground">{subtitle}</p>
+          )}
+        </div>
+      </div>
+      {right && <div className="shrink-0">{right}</div>}
+    </div>
+  );
+}
+
 function Row({ label, value }: { label: string; value: string }) {
   return (
     <div className="flex items-center justify-between py-1.5 first:pt-0 last:pb-0 border-b last:border-0">
@@ -773,9 +815,9 @@ function ExplainerDialog({
   ctx: ExplainerCtx;
 }) {
   const titleMap: Record<MetricKey, string> = {
-    mirr: "MIRR — Modified Internal Rate of Return",
-    irr: "IRR — Internal Rate of Return",
-    npv: "NPV — Net Present Value",
+    mirr: "MIRR - Modified Internal Rate of Return",
+    irr: "IRR - Internal Rate of Return",
+    npv: "NPV - Net Present Value",
     payback: "Payback Period",
     decision: "Investment Recommendation",
   };
@@ -784,7 +826,13 @@ function ExplainerDialog({
     <Dialog open={open !== null} onOpenChange={(o) => !o && onClose()}>
       <DialogContent className="max-w-2xl max-h-[85vh] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle>{open && titleMap[open]}</DialogTitle>
+          <div className="flex items-center gap-2 text-[10px] font-semibold uppercase tracking-[0.25em] text-accent">
+            <span className="h-1.5 w-1.5 rounded-full bg-accent" />
+            Calculation Breakdown
+          </div>
+          <DialogTitle className="font-display text-xl text-primary">
+            {open && titleMap[open]}
+          </DialogTitle>
           <DialogDescription>
             Formula, substituted values, and how this number drives the
             decision.
