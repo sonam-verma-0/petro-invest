@@ -322,12 +322,15 @@ function Index() {
 
 
             {/* Discount & hurdle rates */}
-            <div className="rounded-2xl border bg-card p-6 shadow-sm">
-              <h2 className="text-lg font-semibold">Discount &amp; hurdle rates</h2>
-              <div className="mt-4 grid gap-4 md:grid-cols-2">
+            <div className="rounded-2xl border border-primary/10 bg-card p-6 shadow-sm">
+              <SectionHeader
+                title="Discount - Hurdle Rates"
+                subtitle="Cost of capital and the minimum return required to approve the investment."
+              />
+              <div className="mt-2 grid gap-4 md:grid-cols-2">
                 <Field
                   label="WACC %"
-                  tip="Weighted Average Cost of Capital — used to discount NPV."
+                  tip="Weighted Average Cost of Capital - used to discount NPV."
                 >
                   <NumInput
                     value={waccPct}
@@ -377,13 +380,16 @@ function Index() {
             </div>
 
             {/* Year-by-year table + chart */}
-            <div className="rounded-2xl border bg-card p-6 shadow-sm">
-              <div className="flex items-center justify-between">
-                <h2 className="text-lg font-semibold">Cash flow timeline</h2>
-                <span className="text-xs text-muted-foreground">
-                  Auto-generated
-                </span>
-              </div>
+            <div className="rounded-2xl border border-primary/10 bg-card p-6 shadow-sm">
+              <SectionHeader
+                title="Cash Flow Timeline"
+                right={
+                  <span className="text-xs text-muted-foreground">
+                    Auto-generated
+                  </span>
+                }
+              />
+
 
               <div className="mt-4 h-64 w-full">
                 <ResponsiveContainer width="100%" height="100%">
