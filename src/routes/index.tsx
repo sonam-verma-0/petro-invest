@@ -209,9 +209,12 @@ function Index() {
         <section className="grid gap-6 lg:grid-cols-[1fr_400px]">
           <div className="space-y-6">
             {/* Project details */}
-            <div className="rounded-2xl border bg-card p-6 shadow-sm">
-              <h2 className="text-lg font-semibold">Project details</h2>
-              <div className="mt-4 grid gap-4 md:grid-cols-2">
+            <div className="rounded-2xl border border-primary/10 bg-card p-6 shadow-sm">
+              <SectionHeader
+                title="Project Details"
+                subtitle="Identify the proposal and set the evaluation horizon."
+              />
+              <div className="mt-2 grid gap-4 md:grid-cols-2">
                 <Field label="Project Name">
                   <input
                     type="text"
