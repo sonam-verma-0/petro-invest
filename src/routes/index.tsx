@@ -172,29 +172,31 @@ function Index() {
               alt="PETRO INVEST — Capital Budgeting & Investment Evaluator"
               className="h-28 md:h-36 lg:h-40 w-auto object-contain object-left -ml-2"
             />
-            <div className="mt-4 flex flex-wrap items-center gap-x-3 gap-y-1 text-sm font-semibold tracking-wide">
-              <span className="text-primary">Evaluate<span className="text-accent">.</span></span>
-              <span className="text-accent/40">|</span>
-              <span className="text-primary">Analyze<span className="text-accent">.</span></span>
-              <span className="text-accent/40">|</span>
-              <span className="text-accent">Invest<span className="text-accent">.</span></span>
+            <div className="mt-1 flex items-center gap-2.5 text-[11px] md:text-xs font-semibold uppercase tracking-[0.25em] text-primary">
+              <span className="h-1.5 w-1.5 rounded-full bg-accent" />
+              <span>Evaluate</span>
+              <span className="text-accent">·</span>
+              <span>Analyze</span>
+              <span className="text-accent">·</span>
+              <span>Invest</span>
+              <span className="h-px flex-1 max-w-[80px] bg-gradient-to-r from-accent to-transparent" />
             </div>
-            <p className="mt-4 max-w-2xl text-muted-foreground leading-relaxed">
+            <p className="mt-5 max-w-2xl text-muted-foreground leading-relaxed">
               Transform project proposals into investment decisions through
               transparent financial analytics and risk-adjusted returns.
             </p>
           </div>
-          <div className="shrink-0 flex items-center gap-3 rounded-2xl border bg-card/80 px-3 py-2 sm:px-4 sm:py-3 shadow-sm backdrop-blur">
+          <div className="shrink-0 flex items-center gap-3 rounded-2xl border border-primary/15 bg-card/80 px-3 py-2 sm:px-4 sm:py-3 shadow-sm backdrop-blur">
             <img
               src={indianOilLogo.url}
               alt="Indian Oil Corporation logo"
               className="h-10 w-10 sm:h-12 sm:w-12 object-contain"
             />
-            <div className="hidden md:block border-l pl-3">
+            <div className="hidden md:block border-l border-primary/20 pl-3">
               <div className="text-[10px] uppercase tracking-wider text-muted-foreground">
                 In association with
               </div>
-              <div className="text-sm font-semibold text-foreground leading-tight">
+              <div className="text-sm font-semibold text-primary leading-tight">
                 Indian Oil
               </div>
               <div className="text-[10px] text-muted-foreground">
