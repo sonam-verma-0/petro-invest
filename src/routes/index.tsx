@@ -473,8 +473,17 @@ function Index() {
 
           {/* Results panel */}
           <aside className="space-y-4 lg:sticky lg:top-6 self-start">
+            <div className="flex items-center gap-3 px-1">
+              <span className="h-6 w-1 rounded-full bg-gradient-to-b from-accent to-primary" />
+              <h2 className="font-display text-xl font-semibold tracking-tight text-primary">
+                Results
+              </h2>
+              <span className="ml-auto text-[10px] uppercase tracking-[0.2em] text-muted-foreground">
+                Investment Verdict
+              </span>
+            </div>
             {!showResults ? (
-              <div className="rounded-2xl border bg-card p-8 text-center">
+              <div className="rounded-2xl border border-primary/10 bg-card p-8 text-center">
                 <Calculator className="mx-auto size-8 text-muted-foreground" />
                 <p className="mt-3 text-sm text-muted-foreground">
                   Fill in the cash flows and click{" "}
