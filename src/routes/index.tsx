@@ -169,19 +169,10 @@ function Index() {
             <h1 className="sr-only">PETRO INVEST</h1>
             <img
               src={petroInvestLogo.url}
-              alt="PETRO INVEST — Capital Budgeting & Investment Evaluator"
-              className="h-28 md:h-36 lg:h-40 w-auto object-contain object-left -ml-2"
+              alt="PETRO INVEST — Capital Budgeting & Investment Evaluator. Evaluate. Analyze. Invest."
+              className="h-32 md:h-40 lg:h-48 w-auto object-contain object-left -ml-2"
             />
-            <div className="mt-1 flex items-center gap-2.5 text-[11px] md:text-xs font-semibold uppercase tracking-[0.25em] text-primary">
-              <span className="h-1.5 w-1.5 rounded-full bg-accent" />
-              <span>Evaluate</span>
-              <span className="text-accent">·</span>
-              <span>Analyze</span>
-              <span className="text-accent">·</span>
-              <span>Invest</span>
-              <span className="h-px flex-1 max-w-[80px] bg-gradient-to-r from-accent to-transparent" />
-            </div>
-            <p className="mt-5 max-w-2xl text-muted-foreground leading-relaxed">
+            <p className="mt-6 max-w-2xl text-muted-foreground leading-relaxed">
               Transform project proposals into investment decisions through
               transparent financial analytics and risk-adjusted returns.
             </p>
