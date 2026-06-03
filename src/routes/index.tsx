@@ -815,9 +815,9 @@ function ExplainerDialog({
   ctx: ExplainerCtx;
 }) {
   const titleMap: Record<MetricKey, string> = {
-    mirr: "MIRR — Modified Internal Rate of Return",
-    irr: "IRR — Internal Rate of Return",
-    npv: "NPV — Net Present Value",
+    mirr: "MIRR - Modified Internal Rate of Return",
+    irr: "IRR - Internal Rate of Return",
+    npv: "NPV - Net Present Value",
     payback: "Payback Period",
     decision: "Investment Recommendation",
   };
@@ -826,7 +826,13 @@ function ExplainerDialog({
     <Dialog open={open !== null} onOpenChange={(o) => !o && onClose()}>
       <DialogContent className="max-w-2xl max-h-[85vh] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle>{open && titleMap[open]}</DialogTitle>
+          <div className="flex items-center gap-2 text-[10px] font-semibold uppercase tracking-[0.25em] text-accent">
+            <span className="h-1.5 w-1.5 rounded-full bg-accent" />
+            Calculation Breakdown
+          </div>
+          <DialogTitle className="font-display text-xl text-primary">
+            {open && titleMap[open]}
+          </DialogTitle>
           <DialogDescription>
             Formula, substituted values, and how this number drives the
             decision.
