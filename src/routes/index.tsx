@@ -16,7 +16,7 @@ import {
 } from "recharts";
 import { mirr, npv, irr, paybackPeriod, discountedPaybackPeriod } from "@/lib/finance";
 import indianOilLogo from "@/assets/indianoil-logo.png.asset.json";
-import petroInvestLogo from "@/assets/petroinvest-logo-v2.png.asset.json";
+import petroInvestLogo from "@/assets/petroinvest-logo-hires.png.asset.json";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -164,37 +164,39 @@ function Index() {
   return (
     <TooltipProvider delayDuration={150}>
       <main className="mx-auto max-w-7xl px-6 py-10">
-        <header className="mb-12 flex items-start justify-between gap-6 flex-nowrap">
-          <div className="min-w-0 flex-1">
-            <h1 className="sr-only">PETRO INVEST</h1>
-            <img
-              src={petroInvestLogo.url}
-              alt="PETRO INVEST — Capital Budgeting & Investment Evaluator. Evaluate. Analyze. Invest."
-              className="h-32 md:h-40 lg:h-48 w-auto object-contain object-left -ml-2"
-            />
-            <p className="mt-6 max-w-2xl text-muted-foreground leading-relaxed">
-              Transform project proposals into investment decisions through
-              transparent financial analytics and risk-adjusted returns.
-            </p>
-          </div>
-          <div className="shrink-0 flex items-center gap-3 rounded-2xl border border-primary/15 bg-card/80 px-3 py-2 sm:px-4 sm:py-3 shadow-sm backdrop-blur">
-            <img
-              src={indianOilLogo.url}
-              alt="Indian Oil Corporation logo"
-              className="h-10 w-10 sm:h-12 sm:w-12 object-contain"
-            />
-            <div className="hidden md:block border-l border-primary/20 pl-3">
-              <div className="text-[10px] uppercase tracking-wider text-muted-foreground">
-                In association with
-              </div>
-              <div className="text-sm font-semibold text-primary leading-tight">
-                Indian Oil
-              </div>
-              <div className="text-[10px] text-muted-foreground">
-                Corporation Ltd.
+        <header className="mb-12">
+          <div className="flex flex-col gap-6 md:flex-row md:items-center md:justify-between">
+            <div className="min-w-0 flex-1 flex justify-center md:justify-start">
+              <h1 className="sr-only">PETRO INVEST — Capital Budgeting & Investment Evaluator</h1>
+              <img
+                src={petroInvestLogo.url}
+                alt="PETRO INVEST — Capital Budgeting & Investment Evaluator. Evaluate. Analyze. Invest."
+                className="h-28 sm:h-36 md:h-40 lg:h-48 w-auto object-contain"
+                style={{ imageRendering: "auto" }}
+                decoding="async"
+                loading="eager"
+              />
+            </div>
+            <div className="shrink-0 mx-auto md:mx-0 flex items-center gap-3 rounded-2xl border border-primary/15 bg-card/80 px-4 py-3 shadow-sm backdrop-blur">
+              <img
+                src={indianOilLogo.url}
+                alt="Indian Oil Corporation logo"
+                className="h-11 w-11 sm:h-12 sm:w-12 object-contain"
+              />
+              <div className="border-l border-primary/20 pl-3">
+                <div className="text-[10px] uppercase tracking-wider text-muted-foreground">
+                  In association with
+                </div>
+                <div className="text-sm font-semibold text-primary leading-tight">
+                  Indian Oil Corporation Ltd.
+                </div>
               </div>
             </div>
           </div>
+          <p className="mt-8 max-w-2xl text-muted-foreground leading-relaxed text-center md:text-left">
+            Transform project proposals into investment decisions through
+            transparent financial analytics and risk-adjusted returns.
+          </p>
         </header>
 
         <section className="grid gap-6 lg:grid-cols-[1fr_400px]">
