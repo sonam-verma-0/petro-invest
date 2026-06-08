@@ -513,28 +513,31 @@ function Index() {
               </div>
             ) : (
               <>
-                {/* MIRR hero card */}
+                {/* MIRR hero card — primary decision metric */}
                 <button
                   type="button"
                   onClick={() => setOpenMetric("mirr")}
-                  className={`w-full rounded-2xl border p-6 text-left shadow-sm transition hover:opacity-95 ${
+                  className={`relative w-full overflow-hidden rounded-2xl border-2 p-7 text-left shadow-xl ring-4 ring-offset-2 ring-offset-background transition hover:scale-[1.01] hover:shadow-2xl ${
                     mirrValue == null
-                      ? "bg-primary text-primary-foreground"
+                      ? "bg-primary text-primary-foreground ring-primary/30 border-primary"
                       : mirrValue >= hurdleRate
-                        ? "bg-success text-success-foreground"
-                        : "bg-destructive text-destructive-foreground"
+                        ? "bg-success text-success-foreground ring-success/40 border-success"
+                        : "bg-destructive text-destructive-foreground ring-destructive/40 border-destructive"
                   }`}
                 >
-                  <div className="flex items-center gap-1.5 text-xs uppercase tracking-wide opacity-80">
-                    Modified IRR <Info className="size-3.5" />
+                  <span className="absolute right-4 top-4 rounded-full bg-white/20 px-3 py-1 text-[10px] font-bold uppercase tracking-widest backdrop-blur-sm">
+                    Primary Metric
+                  </span>
+                  <div className="flex items-center gap-1.5 text-xs font-semibold uppercase tracking-widest opacity-90">
+                    Modified IRR (MIRR) <Info className="size-3.5" />
                   </div>
-                  <div className="mt-1 font-display text-5xl font-semibold">
+                  <div className="mt-2 font-display text-6xl font-bold tracking-tight">
                     {mirrValue == null
                       ? "—"
                       : `${(mirrValue * 100).toFixed(2)}%`}
                   </div>
-                  <div className="mt-1 text-sm opacity-80">
-                    Finance &amp; reinvestment at WACC · click to see steps
+                  <div className="mt-2 text-sm opacity-90">
+                    Key indicator for investment decision · Finance &amp; reinvestment at WACC · click to see steps
                   </div>
                 </button>
 
@@ -601,6 +604,16 @@ function Index() {
                         : `${payback.toFixed(2)} yrs`
                     }
                     subtitle="Years to recover Capex"
+                    onClick={() => setOpenMetric("payback")}
+                  />
+                  <MetricCard
+                    label={`Discounted Payback @ ${(wacc * 100).toFixed(1)}%`}
+                    value={
+                      discountedPayback == null
+                        ? "Not recovered"
+                        : `${discountedPayback.toFixed(2)} yrs`
+                    }
+                    subtitle="Time-value adjusted recovery"
                     onClick={() => setOpenMetric("payback")}
                   />
                   <MetricCard
