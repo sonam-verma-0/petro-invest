@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
-import { Calculator, Info } from "lucide-react";
+import { Calculator, Info, RotateCcw } from "lucide-react";
 import {
   BarChart,
   Bar,
@@ -160,6 +160,24 @@ function Index() {
   }, [cashFlows]);
 
   const calculate = () => setShowResults(true);
+
+  const resetAll = () => {
+    setProjectName("New IOCL Project");
+    setProjectType("new");
+    setYears(5);
+    setUnit("cr");
+    setCapex("");
+    setAnnualSales("");
+    setAnnualNfr("");
+    setAnnualRevenueExp("");
+    setAnnualTaxBenefit("");
+    setWaccPct(9.7);
+    setFinanceRatePct(9.7);
+    setReinvestRatePct(9.7);
+    setHurdleRatePct(12);
+    setShowResults(false);
+    setOpenMetric(null);
+  };
 
   return (
     <TooltipProvider delayDuration={150}>
@@ -455,7 +473,16 @@ function Index() {
                 </table>
               </div>
 
-              <div className="mt-6 flex justify-end">
+              <div className="mt-6 flex justify-end gap-3">
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={resetAll}
+                  className="gap-2"
+                >
+                  <RotateCcw className="size-4" />
+                  Reset
+                </Button>
                 <Button type="button" onClick={calculate} className="gap-2">
                   <Calculator className="size-4" />
                   Calculate
