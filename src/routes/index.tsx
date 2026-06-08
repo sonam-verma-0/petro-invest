@@ -161,6 +161,24 @@ function Index() {
 
   const calculate = () => setShowResults(true);
 
+  const resetAll = () => {
+    setProjectName("New IOCL Project");
+    setProjectType("new");
+    setYears(5);
+    setUnit("cr");
+    setCapex("");
+    setAnnualSales("");
+    setAnnualNfr("");
+    setAnnualRevenueExp("");
+    setAnnualTaxBenefit("");
+    setWaccPct(9.7);
+    setFinanceRatePct(9.7);
+    setReinvestRatePct(9.7);
+    setHurdleRatePct(12);
+    setShowResults(false);
+    setOpenMetric(null);
+  };
+
   return (
     <TooltipProvider delayDuration={150}>
       <main className="mx-auto max-w-7xl px-6 py-10">
