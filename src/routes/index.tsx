@@ -460,12 +460,48 @@ function Index() {
                         <td
                           className={`py-2 pr-3 text-right font-mono ${d.cashFlow < 0 ? "text-destructive" : "text-success"}`}
                         >
-                          {fmtUnit(d.cashFlow || 0)}
+                          <Tooltip>
+                            <TooltipTrigger asChild>
+                              <span className="inline-flex items-center gap-1 cursor-help">
+                                {fmtUnit(d.cashFlow || 0)}
+                                <Info className="size-3 text-muted-foreground/70" />
+                              </span>
+                            </TooltipTrigger>
+                            <TooltipContent side="top" className="max-w-[240px] text-xs leading-relaxed">
+                              {i === 0 ? (
+                                <>
+                                  Year 0 outflow = −Capex = {fmtUnit(d.cashFlow || 0)}
+                                </>
+                              ) : (
+                                <>
+                                  Annual net = Sales + NFR + Tax Benefit − Expenses = {fmtUnit(d.cashFlow || 0)}
+                                </>
+                              )}
+                            </TooltipContent>
+                          </Tooltip>
                         </td>
                         <td
                           className={`py-2 pr-3 text-right font-mono ${d.cumulative < 0 ? "text-destructive" : "text-foreground"}`}
                         >
-                          {fmtUnit(d.cumulative || 0)}
+                          <Tooltip>
+                            <TooltipTrigger asChild>
+                              <span className="inline-flex items-center gap-1 cursor-help">
+                                {fmtUnit(d.cumulative || 0)}
+                                <Info className="size-3 text-muted-foreground/70" />
+                              </span>
+                            </TooltipTrigger>
+                            <TooltipContent side="top" className="max-w-[240px] text-xs leading-relaxed">
+                              {i === 0 ? (
+                                <>
+                                  Cumulative = Year 0 Net Cash Flow = {fmtUnit(d.cumulative || 0)}
+                                </>
+                              ) : (
+                                <>
+                                  Cumulative = {fmtUnit(chartData[i - 1].cumulative || 0)} + {fmtUnit(d.cashFlow || 0)} = {fmtUnit(d.cumulative || 0)}
+                                </>
+                              )}
+                            </TooltipContent>
+                          </Tooltip>
                         </td>
                       </tr>
                     ))}
