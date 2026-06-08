@@ -473,7 +473,16 @@ function Index() {
                 </table>
               </div>
 
-              <div className="mt-6 flex justify-end">
+              <div className="mt-6 flex justify-end gap-3">
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={resetAll}
+                  className="gap-2"
+                >
+                  <RotateCcw className="size-4" />
+                  Reset
+                </Button>
                 <Button type="button" onClick={calculate} className="gap-2">
                   <Calculator className="size-4" />
                   Calculate
