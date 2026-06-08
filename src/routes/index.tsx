@@ -607,6 +607,16 @@ function Index() {
                     onClick={() => setOpenMetric("payback")}
                   />
                   <MetricCard
+                    label={`Discounted Payback @ ${(wacc * 100).toFixed(1)}%`}
+                    value={
+                      discountedPayback == null
+                        ? "Not recovered"
+                        : `${discountedPayback.toFixed(2)} yrs`
+                    }
+                    subtitle="Time-value adjusted recovery"
+                    onClick={() => setOpenMetric("payback")}
+                  />
+                  <MetricCard
                     label="Annual Net CF"
                     value={fmtUnit(annualNet || 0)}
                     subtitle="Sales+NFR+Tax−Expenses"
