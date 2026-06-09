@@ -89,23 +89,31 @@ function Index() {
   const hurdleRate = n(hurdleRatePct) / 100;
   const yearsN = Math.max(0, Math.floor(n(years)));
 
-  // Keep year-wise sales array sized to yearsN, preserving entered values.
+  // Keep year-wise arrays sized to yearsN, preserving entered values.
   useEffect(() => {
-    setYearlySales((prev) => {
+    const resize = (prev: Array<number | "">): Array<number | ""> => {
       if (prev.length === yearsN) return prev;
       const next: Array<number | ""> = Array(yearsN).fill("");
       for (let i = 0; i < Math.min(prev.length, yearsN); i++) next[i] = prev[i];
       return next;
-    });
+    };
+    setYearlySales(resize);
+    setYearlyNfr(resize);
+    setYearlyRevExp(resize);
+    setYearlyTaxBen(resize);
   }, [yearsN]);
 
-  // Per-year sales (in selected unit) used for cash flow generation.
-  const perYearSalesUnit = useMemo(() => {
-    if (salesMode === "yearwise") {
-      return Array.from({ length: yearsN }, (_, i) => n(yearlySales[i] ?? ""));
+  // Mode switcher: when switching to year-wise, copy constant values into every year.
+  const switchSalesMode = (mode: "constant" | "yearwise") => {
+    if (mode === salesMode) return;
+    if (mode === "yearwise") {
+      setYearlySales(Array(yearsN).fill(annualSales));
+      setYearlyNfr(Array(yearsN).fill(annualNfr));
+      setYearlyRevExp(Array(yearsN).fill(annualRevenueExp));
+      setYearlyTaxBen(Array(yearsN).fill(annualTaxBenefit));
     }
-    return Array.from({ length: yearsN }, () => n(annualSales));
-  }, [salesMode, yearsN, yearlySales, annualSales]);
+    setSalesMode(mode);
+  };
 
   const capexRupees = n(capex) * unitMultiplier;
   const otherAnnualUnit = n(annualNfr) + n(annualTaxBenefit) - n(annualRevenueExp);
@@ -120,10 +128,25 @@ function Index() {
   const cashFlows = useMemo(() => {
     const flows: number[] = [-capexRupees];
     for (let i = 0; i < yearsN; i++) {
-      flows.push((perYearSalesUnit[i] + otherAnnualUnit) * unitMultiplier);
+      const yearUnit =
+        salesMode === "yearwise"
+          ? n(yearlySales[i]) + n(yearlyNfr[i]) + n(yearlyTaxBen[i]) - n(yearlyRevExp[i])
+          : n(annualSales) + otherAnnualUnit;
+      flows.push(yearUnit * unitMultiplier);
     }
     return flows;
-  }, [yearsN, capexRupees, perYearSalesUnit, otherAnnualUnit, unitMultiplier]);
+  }, [
+    yearsN,
+    capexRupees,
+    salesMode,
+    yearlySales,
+    yearlyNfr,
+    yearlyRevExp,
+    yearlyTaxBen,
+    annualSales,
+    otherAnnualUnit,
+    unitMultiplier,
+  ]);
 
   // Representative year-1 net cash flow used by the summary card / dialog context.
   const annualNet = cashFlows[1] ?? 0;
