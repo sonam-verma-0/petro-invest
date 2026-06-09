@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Calculator, Info, RotateCcw } from "lucide-react";
 import {
   BarChart,
@@ -64,7 +64,9 @@ function Index() {
   const unitMultiplier = unit === "cr" ? 1e7 : unit === "lakh" ? 1e5 : 1;
 
   const [capex, setCapex] = useState<number | "">("");
+  const [salesMode, setSalesMode] = useState<"constant" | "yearwise">("constant");
   const [annualSales, setAnnualSales] = useState<number | "">("");
+  const [yearlySales, setYearlySales] = useState<Array<number | "">>(() => Array(5).fill(""));
   const [annualNfr, setAnnualNfr] = useState<number | "">("");
   const [annualRevenueExp, setAnnualRevenueExp] = useState<number | "">("");
   const [annualTaxBenefit, setAnnualTaxBenefit] = useState<number | "">("");
@@ -84,11 +86,26 @@ function Index() {
   const hurdleRate = n(hurdleRatePct) / 100;
   const yearsN = Math.max(0, Math.floor(n(years)));
 
-  // Annual net cash flow auto-derived from line items.
-  const annualNetUser =
-    n(annualSales) + n(annualNfr) + n(annualTaxBenefit) - n(annualRevenueExp);
-  const annualNet = annualNetUser * unitMultiplier;
+  // Keep year-wise sales array sized to yearsN, preserving entered values.
+  useEffect(() => {
+    setYearlySales((prev) => {
+      if (prev.length === yearsN) return prev;
+      const next: Array<number | ""> = Array(yearsN).fill("");
+      for (let i = 0; i < Math.min(prev.length, yearsN); i++) next[i] = prev[i];
+      return next;
+    });
+  }, [yearsN]);
+
+  // Per-year sales (in selected unit) used for cash flow generation.
+  const perYearSalesUnit = useMemo(() => {
+    if (salesMode === "yearwise") {
+      return Array.from({ length: yearsN }, (_, i) => n(yearlySales[i] ?? ""));
+    }
+    return Array.from({ length: yearsN }, () => n(annualSales));
+  }, [salesMode, yearsN, yearlySales, annualSales]);
+
   const capexRupees = n(capex) * unitMultiplier;
+  const otherAnnualUnit = n(annualNfr) + n(annualTaxBenefit) - n(annualRevenueExp);
 
   // Unit-aware display formatter for rupee amounts.
   const fmtUnit = (v: number) => {
@@ -99,9 +116,14 @@ function Index() {
 
   const cashFlows = useMemo(() => {
     const flows: number[] = [-capexRupees];
-    for (let i = 1; i <= yearsN; i++) flows.push(annualNet);
+    for (let i = 0; i < yearsN; i++) {
+      flows.push((perYearSalesUnit[i] + otherAnnualUnit) * unitMultiplier);
+    }
     return flows;
-  }, [yearsN, capexRupees, annualNet]);
+  }, [yearsN, capexRupees, perYearSalesUnit, otherAnnualUnit, unitMultiplier]);
+
+  // Representative year-1 net cash flow used by the summary card / dialog context.
+  const annualNet = cashFlows[1] ?? 0;
 
   const hasNegative = cashFlows.some((v) => v < 0);
   const hasPositive = cashFlows.some((v) => v > 0);
@@ -167,7 +189,9 @@ function Index() {
     setYears(5);
     setUnit("cr");
     setCapex("");
+    setSalesMode("constant");
     setAnnualSales("");
+    setYearlySales(Array(5).fill(""));
     setAnnualNfr("");
     setAnnualRevenueExp("");
     setAnnualTaxBenefit("");
@@ -297,12 +321,74 @@ function Index() {
                 >
                   <NumInput value={capex} onChange={setCapex} />
                 </Field>
-                <Field
-                  label={`Project Sales - annual (${unitLabel(unit)})`}
-                  tip="Expected annual sales revenue."
-                >
-                  <NumInput value={annualSales} onChange={setAnnualSales} />
-                </Field>
+                <div className="md:col-span-2 rounded-xl border border-primary/10 bg-background/40 p-4">
+                  <div className="mb-3 flex flex-wrap items-center justify-between gap-3">
+                    <div>
+                      <div className="text-sm font-semibold text-foreground">
+                        Project Sales ({unitLabel(unit)})
+                      </div>
+                      <div className="text-xs text-muted-foreground">
+                        Choose whether sales repeat each year or vary year by year.
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <span className="text-xs text-muted-foreground">Mode:</span>
+                      {(
+                        [
+                          ["constant", "Constant Annual"],
+                          ["yearwise", "Year-wise"],
+                        ] as const
+                      ).map(([k, lbl]) => (
+                        <button
+                          key={k}
+                          type="button"
+                          onClick={() => setSalesMode(k)}
+                          className={`rounded-md border px-2.5 py-1 text-xs font-medium transition ${
+                            salesMode === k
+                              ? "border-accent bg-accent text-accent-foreground"
+                              : "bg-background hover:bg-muted"
+                          }`}
+                        >
+                          {lbl}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+
+                  {salesMode === "constant" ? (
+                    <Field
+                      label={`Project Sales - annual (${unitLabel(unit)})`}
+                      tip="Expected annual sales revenue, applied to every year."
+                    >
+                      <NumInput value={annualSales} onChange={setAnnualSales} />
+                    </Field>
+                  ) : (
+                    <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+                      {Array.from({ length: yearsN }, (_, i) => (
+                        <Field
+                          key={i}
+                          label={`Project Sales - Year ${i + 1} (${unitLabel(unit)})`}
+                        >
+                          <NumInput
+                            value={yearlySales[i] ?? ""}
+                            onChange={(v) =>
+                              setYearlySales((prev) => {
+                                const next = [...prev];
+                                next[i] = v;
+                                return next;
+                              })
+                            }
+                          />
+                        </Field>
+                      ))}
+                      {yearsN === 0 && (
+                        <p className="text-xs text-muted-foreground sm:col-span-2 lg:col-span-3">
+                          Set the number of years to enter year-wise sales.
+                        </p>
+                      )}
+                    </div>
+                  )}
+                </div>
                 <Field
                   label={`NFR Income - annual (${unitLabel(unit)})`}
                   tip="Non-fuel retail income generated annually."
