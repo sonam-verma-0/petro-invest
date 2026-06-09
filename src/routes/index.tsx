@@ -66,10 +66,13 @@ function Index() {
   const [capex, setCapex] = useState<number | "">("");
   const [salesMode, setSalesMode] = useState<"constant" | "yearwise">("constant");
   const [annualSales, setAnnualSales] = useState<number | "">("");
-  const [yearlySales, setYearlySales] = useState<Array<number | "">>(() => Array(5).fill(""));
   const [annualNfr, setAnnualNfr] = useState<number | "">("");
   const [annualRevenueExp, setAnnualRevenueExp] = useState<number | "">("");
   const [annualTaxBenefit, setAnnualTaxBenefit] = useState<number | "">("");
+  const [yearlySales, setYearlySales] = useState<Array<number | "">>(() => Array(5).fill(""));
+  const [yearlyNfr, setYearlyNfr] = useState<Array<number | "">>(() => Array(5).fill(""));
+  const [yearlyRevExp, setYearlyRevExp] = useState<Array<number | "">>(() => Array(5).fill(""));
+  const [yearlyTaxBen, setYearlyTaxBen] = useState<Array<number | "">>(() => Array(5).fill(""));
 
   const [waccPct, setWaccPct] = useState<number | "">(9.7);
   const [financeRatePct, setFinanceRatePct] = useState<number | "">(9.7);
