@@ -64,7 +64,9 @@ function Index() {
   const unitMultiplier = unit === "cr" ? 1e7 : unit === "lakh" ? 1e5 : 1;
 
   const [capex, setCapex] = useState<number | "">("");
+  const [salesMode, setSalesMode] = useState<"constant" | "yearwise">("constant");
   const [annualSales, setAnnualSales] = useState<number | "">("");
+  const [yearlySales, setYearlySales] = useState<Array<number | "">>(() => Array(5).fill(""));
   const [annualNfr, setAnnualNfr] = useState<number | "">("");
   const [annualRevenueExp, setAnnualRevenueExp] = useState<number | "">("");
   const [annualTaxBenefit, setAnnualTaxBenefit] = useState<number | "">("");
