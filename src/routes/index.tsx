@@ -122,6 +122,9 @@ function Index() {
     return flows;
   }, [yearsN, capexRupees, perYearSalesUnit, otherAnnualUnit, unitMultiplier]);
 
+  // Representative year-1 net cash flow used by the summary card / dialog context.
+  const annualNet = cashFlows[1] ?? 0;
+
   const hasNegative = cashFlows.some((v) => v < 0);
   const hasPositive = cashFlows.some((v) => v > 0);
 
