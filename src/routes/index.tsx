@@ -86,11 +86,26 @@ function Index() {
   const hurdleRate = n(hurdleRatePct) / 100;
   const yearsN = Math.max(0, Math.floor(n(years)));
 
-  // Annual net cash flow auto-derived from line items.
-  const annualNetUser =
-    n(annualSales) + n(annualNfr) + n(annualTaxBenefit) - n(annualRevenueExp);
-  const annualNet = annualNetUser * unitMultiplier;
+  // Keep year-wise sales array sized to yearsN, preserving entered values.
+  useEffect(() => {
+    setYearlySales((prev) => {
+      if (prev.length === yearsN) return prev;
+      const next: Array<number | ""> = Array(yearsN).fill("");
+      for (let i = 0; i < Math.min(prev.length, yearsN); i++) next[i] = prev[i];
+      return next;
+    });
+  }, [yearsN]);
+
+  // Per-year sales (in selected unit) used for cash flow generation.
+  const perYearSalesUnit = useMemo(() => {
+    if (salesMode === "yearwise") {
+      return Array.from({ length: yearsN }, (_, i) => n(yearlySales[i] ?? ""));
+    }
+    return Array.from({ length: yearsN }, () => n(annualSales));
+  }, [salesMode, yearsN, yearlySales, annualSales]);
+
   const capexRupees = n(capex) * unitMultiplier;
+  const otherAnnualUnit = n(annualNfr) + n(annualTaxBenefit) - n(annualRevenueExp);
 
   // Unit-aware display formatter for rupee amounts.
   const fmtUnit = (v: number) => {
@@ -101,9 +116,11 @@ function Index() {
 
   const cashFlows = useMemo(() => {
     const flows: number[] = [-capexRupees];
-    for (let i = 1; i <= yearsN; i++) flows.push(annualNet);
+    for (let i = 0; i < yearsN; i++) {
+      flows.push((perYearSalesUnit[i] + otherAnnualUnit) * unitMultiplier);
+    }
     return flows;
-  }, [yearsN, capexRupees, annualNet]);
+  }, [yearsN, capexRupees, perYearSalesUnit, otherAnnualUnit, unitMultiplier]);
 
   const hasNegative = cashFlows.some((v) => v < 0);
   const hasPositive = cashFlows.some((v) => v > 0);
