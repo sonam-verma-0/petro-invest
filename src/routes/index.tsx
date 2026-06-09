@@ -218,6 +218,9 @@ function Index() {
     setSalesMode("constant");
     setAnnualSales("");
     setYearlySales(Array(5).fill(""));
+    setYearlyNfr(Array(5).fill(""));
+    setYearlyRevExp(Array(5).fill(""));
+    setYearlyTaxBen(Array(5).fill(""));
     setAnnualNfr("");
     setAnnualRevenueExp("");
     setAnnualTaxBenefit("");
