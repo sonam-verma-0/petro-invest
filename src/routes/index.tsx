@@ -319,12 +319,74 @@ function Index() {
                 >
                   <NumInput value={capex} onChange={setCapex} />
                 </Field>
-                <Field
-                  label={`Project Sales - annual (${unitLabel(unit)})`}
-                  tip="Expected annual sales revenue."
-                >
-                  <NumInput value={annualSales} onChange={setAnnualSales} />
-                </Field>
+                <div className="md:col-span-2 rounded-xl border border-primary/10 bg-background/40 p-4">
+                  <div className="mb-3 flex flex-wrap items-center justify-between gap-3">
+                    <div>
+                      <div className="text-sm font-semibold text-foreground">
+                        Project Sales ({unitLabel(unit)})
+                      </div>
+                      <div className="text-xs text-muted-foreground">
+                        Choose whether sales repeat each year or vary year by year.
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <span className="text-xs text-muted-foreground">Mode:</span>
+                      {(
+                        [
+                          ["constant", "Constant Annual"],
+                          ["yearwise", "Year-wise"],
+                        ] as const
+                      ).map(([k, lbl]) => (
+                        <button
+                          key={k}
+                          type="button"
+                          onClick={() => setSalesMode(k)}
+                          className={`rounded-md border px-2.5 py-1 text-xs font-medium transition ${
+                            salesMode === k
+                              ? "border-accent bg-accent text-accent-foreground"
+                              : "bg-background hover:bg-muted"
+                          }`}
+                        >
+                          {lbl}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+
+                  {salesMode === "constant" ? (
+                    <Field
+                      label={`Project Sales - annual (${unitLabel(unit)})`}
+                      tip="Expected annual sales revenue, applied to every year."
+                    >
+                      <NumInput value={annualSales} onChange={setAnnualSales} />
+                    </Field>
+                  ) : (
+                    <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+                      {Array.from({ length: yearsN }, (_, i) => (
+                        <Field
+                          key={i}
+                          label={`Project Sales - Year ${i + 1} (${unitLabel(unit)})`}
+                        >
+                          <NumInput
+                            value={yearlySales[i] ?? ""}
+                            onChange={(v) =>
+                              setYearlySales((prev) => {
+                                const next = [...prev];
+                                next[i] = v;
+                                return next;
+                              })
+                            }
+                          />
+                        </Field>
+                      ))}
+                      {yearsN === 0 && (
+                        <p className="text-xs text-muted-foreground sm:col-span-2 lg:col-span-3">
+                          Set the number of years to enter year-wise sales.
+                        </p>
+                      )}
+                    </div>
+                  )}
+                </div>
                 <Field
                   label={`NFR Income - annual (${unitLabel(unit)})`}
                   tip="Non-fuel retail income generated annually."
