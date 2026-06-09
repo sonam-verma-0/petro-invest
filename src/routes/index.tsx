@@ -354,10 +354,10 @@ function Index() {
                   <div className="mb-3 flex flex-wrap items-center justify-between gap-3">
                     <div>
                       <div className="text-sm font-semibold text-foreground">
-                        Project Sales ({unitLabel(unit)})
+                        Recurring Annual Cash Flows ({unitLabel(unit)})
                       </div>
                       <div className="text-xs text-muted-foreground">
-                        Choose whether sales repeat each year or vary year by year.
+                        Choose whether values repeat each year or vary year by year.
                       </div>
                     </div>
                     <div className="flex items-center gap-2">
@@ -371,7 +371,7 @@ function Index() {
                         <button
                           key={k}
                           type="button"
-                          onClick={() => setSalesMode(k)}
+                          onClick={() => switchSalesMode(k)}
                           className={`rounded-md border px-2.5 py-1 text-xs font-medium transition ${
                             salesMode === k
                               ? "border-accent bg-accent text-accent-foreground"
@@ -385,63 +385,81 @@ function Index() {
                   </div>
 
                   {salesMode === "constant" ? (
-                    <Field
-                      label={`Project Sales - annual (${unitLabel(unit)})`}
-                      tip="Expected annual sales revenue, applied to every year."
-                    >
-                      <NumInput value={annualSales} onChange={setAnnualSales} />
-                    </Field>
+                    <div className="grid gap-4 md:grid-cols-2">
+                      <Field
+                        label={`Project Sales - annual (${unitLabel(unit)})`}
+                        tip="Expected annual sales revenue, applied to every year."
+                      >
+                        <NumInput value={annualSales} onChange={setAnnualSales} />
+                      </Field>
+                      <Field
+                        label={`NFR Income - annual (${unitLabel(unit)})`}
+                        tip="Non-fuel retail income generated annually."
+                      >
+                        <NumInput value={annualNfr} onChange={setAnnualNfr} />
+                      </Field>
+                      <Field
+                        label={`Revenue Expenditure - annual (${unitLabel(unit)})`}
+                        tip="Annual operating expenses."
+                      >
+                        <NumInput value={annualRevenueExp} onChange={setAnnualRevenueExp} />
+                      </Field>
+                      <Field
+                        label={`Income Tax Benefit - annual (${unitLabel(unit)})`}
+                        tip="Annual tax savings or tax benefits."
+                      >
+                        <NumInput value={annualTaxBenefit} onChange={setAnnualTaxBenefit} />
+                      </Field>
+                    </div>
+                  ) : yearsN === 0 ? (
+                    <p className="text-xs text-muted-foreground">
+                      Set the number of years to enter year-wise cash flows.
+                    </p>
                   ) : (
-                    <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-                      {Array.from({ length: yearsN }, (_, i) => (
-                        <Field
-                          key={i}
-                          label={`Project Sales - Year ${i + 1} (${unitLabel(unit)})`}
-                        >
-                          <NumInput
-                            value={yearlySales[i] ?? ""}
-                            onChange={(v) =>
-                              setYearlySales((prev) => {
+                    <div className="overflow-x-auto rounded-lg border border-primary/10">
+                      <table className="w-full min-w-[640px] text-sm">
+                        <thead className="bg-muted/60 text-xs uppercase tracking-wide text-muted-foreground">
+                          <tr>
+                            <th className="px-3 py-2 text-left font-medium">Year</th>
+                            <th className="px-3 py-2 text-left font-medium">Project Sales</th>
+                            <th className="px-3 py-2 text-left font-medium">NFR Income</th>
+                            <th className="px-3 py-2 text-left font-medium">Revenue Expenditure</th>
+                            <th className="px-3 py-2 text-left font-medium">Tax Benefit</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {Array.from({ length: yearsN }, (_, i) => {
+                            const cellSet = (
+                              setter: React.Dispatch<React.SetStateAction<Array<number | "">>>,
+                            ) => (v: number | "") =>
+                              setter((prev) => {
                                 const next = [...prev];
                                 next[i] = v;
                                 return next;
-                              })
-                            }
-                          />
-                        </Field>
-                      ))}
-                      {yearsN === 0 && (
-                        <p className="text-xs text-muted-foreground sm:col-span-2 lg:col-span-3">
-                          Set the number of years to enter year-wise sales.
-                        </p>
-                      )}
+                              });
+                            return (
+                              <tr key={i} className="border-t border-primary/10">
+                                <td className="px-3 py-2 font-medium text-foreground">Y{i + 1}</td>
+                                <td className="px-2 py-1.5">
+                                  <NumInput value={yearlySales[i] ?? ""} onChange={cellSet(setYearlySales)} />
+                                </td>
+                                <td className="px-2 py-1.5">
+                                  <NumInput value={yearlyNfr[i] ?? ""} onChange={cellSet(setYearlyNfr)} />
+                                </td>
+                                <td className="px-2 py-1.5">
+                                  <NumInput value={yearlyRevExp[i] ?? ""} onChange={cellSet(setYearlyRevExp)} />
+                                </td>
+                                <td className="px-2 py-1.5">
+                                  <NumInput value={yearlyTaxBen[i] ?? ""} onChange={cellSet(setYearlyTaxBen)} />
+                                </td>
+                              </tr>
+                            );
+                          })}
+                        </tbody>
+                      </table>
                     </div>
                   )}
                 </div>
-                <Field
-                  label={`NFR Income - annual (${unitLabel(unit)})`}
-                  tip="Non-fuel retail income generated annually."
-                >
-                  <NumInput value={annualNfr} onChange={setAnnualNfr} />
-                </Field>
-                <Field
-                  label={`Revenue Expenditure - annual (${unitLabel(unit)})`}
-                  tip="Annual operating expenses."
-                >
-                  <NumInput
-                    value={annualRevenueExp}
-                    onChange={setAnnualRevenueExp}
-                  />
-                </Field>
-                <Field
-                  label={`Income Tax Benefit - annual (${unitLabel(unit)})`}
-                  tip="Annual tax savings or tax benefits."
-                >
-                  <NumInput
-                    value={annualTaxBenefit}
-                    onChange={setAnnualTaxBenefit}
-                  />
-                </Field>
               </div>
             </div>
 
