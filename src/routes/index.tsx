@@ -189,7 +189,9 @@ function Index() {
     setYears(5);
     setUnit("cr");
     setCapex("");
+    setSalesMode("constant");
     setAnnualSales("");
+    setYearlySales(Array(5).fill(""));
     setAnnualNfr("");
     setAnnualRevenueExp("");
     setAnnualTaxBenefit("");
