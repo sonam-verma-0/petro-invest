@@ -68,11 +68,13 @@ function Index() {
   const [annualSales, setAnnualSales] = useState<number | "">("");
   const [annualNfr, setAnnualNfr] = useState<number | "">("");
   const [annualRevenueExp, setAnnualRevenueExp] = useState<number | "">("");
-  const [annualTaxBenefit, setAnnualTaxBenefit] = useState<number | "">("");
+  const [annualDepreciation, setAnnualDepreciation] = useState<number | "">("");
+  const [annualTaxRatePct, setAnnualTaxRatePct] = useState<number | "">(25);
   const [yearlySales, setYearlySales] = useState<Array<number | "">>(() => Array(5).fill(""));
   const [yearlyNfr, setYearlyNfr] = useState<Array<number | "">>(() => Array(5).fill(""));
   const [yearlyRevExp, setYearlyRevExp] = useState<Array<number | "">>(() => Array(5).fill(""));
-  const [yearlyTaxBen, setYearlyTaxBen] = useState<Array<number | "">>(() => Array(5).fill(""));
+  const [yearlyDepreciation, setYearlyDepreciation] = useState<Array<number | "">>(() => Array(5).fill(""));
+  const [yearlyTaxRatePct, setYearlyTaxRatePct] = useState<Array<number | "">>(() => Array(5).fill(25));
 
   const [waccPct, setWaccPct] = useState<number | "">(9.7);
   const [financeRatePct, setFinanceRatePct] = useState<number | "">(9.7);
