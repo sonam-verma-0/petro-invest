@@ -438,10 +438,22 @@ function Index() {
                         <NumInput value={annualRevenueExp} onChange={setAnnualRevenueExp} />
                       </Field>
                       <Field
-                        label={`Income Tax Benefit - annual (${unitLabel(unit)})`}
-                        tip="Annual tax savings or tax benefits."
+                        label={`Depreciation - annual (${unitLabel(unit)})`}
+                        tip="Annual depreciation charge. Reduces taxable income but is added back to compute net cash flow."
                       >
-                        <NumInput value={annualTaxBenefit} onChange={setAnnualTaxBenefit} />
+                        <NumInput value={annualDepreciation} onChange={setAnnualDepreciation} />
+                      </Field>
+                      <Field
+                        label="Income Tax Rate (%)"
+                        tip="Effective corporate income tax rate applied to Cash Flow Before Tax (CBT)."
+                      >
+                        <NumInput
+                          value={annualTaxRatePct}
+                          onChange={setAnnualTaxRatePct}
+                          min={0}
+                          max={100}
+                          step="0.1"
+                        />
                       </Field>
                     </div>
                   ) : yearsN === 0 ? (
@@ -450,14 +462,15 @@ function Index() {
                     </p>
                   ) : (
                     <div className="overflow-x-auto rounded-lg border border-primary/10">
-                      <table className="w-full min-w-[640px] text-sm">
+                      <table className="w-full min-w-[760px] text-sm">
                         <thead className="bg-muted/60 text-xs uppercase tracking-wide text-muted-foreground">
                           <tr>
                             <th className="px-3 py-2 text-left font-medium">Year</th>
                             <th className="px-3 py-2 text-left font-medium">Project Sales</th>
                             <th className="px-3 py-2 text-left font-medium">NFR Income</th>
                             <th className="px-3 py-2 text-left font-medium">Revenue Expenditure</th>
-                            <th className="px-3 py-2 text-left font-medium">Tax Benefit</th>
+                            <th className="px-3 py-2 text-left font-medium">Depreciation</th>
+                            <th className="px-3 py-2 text-left font-medium">Income Tax Rate (%)</th>
                           </tr>
                         </thead>
                         <tbody>
@@ -483,7 +496,16 @@ function Index() {
                                   <NumInput value={yearlyRevExp[i] ?? ""} onChange={cellSet(setYearlyRevExp)} />
                                 </td>
                                 <td className="px-2 py-1.5">
-                                  <NumInput value={yearlyTaxBen[i] ?? ""} onChange={cellSet(setYearlyTaxBen)} />
+                                  <NumInput value={yearlyDepreciation[i] ?? ""} onChange={cellSet(setYearlyDepreciation)} />
+                                </td>
+                                <td className="px-2 py-1.5">
+                                  <NumInput
+                                    value={yearlyTaxRatePct[i] ?? ""}
+                                    onChange={cellSet(setYearlyTaxRatePct)}
+                                    min={0}
+                                    max={100}
+                                    step="0.1"
+                                  />
                                 </td>
                               </tr>
                             );
