@@ -853,7 +853,7 @@ function Index() {
                   <MetricCard
                     label="Annual Net CF"
                     value={fmtUnit(annualNet || 0)}
-                    subtitle="Sales+NFR+Tax−Expenses"
+                    subtitle="CFAT + Depreciation (Y1)"
                     positive={annualNet >= 0}
                   />
                 </div>
