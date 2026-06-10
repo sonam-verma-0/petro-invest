@@ -68,11 +68,13 @@ function Index() {
   const [annualSales, setAnnualSales] = useState<number | "">("");
   const [annualNfr, setAnnualNfr] = useState<number | "">("");
   const [annualRevenueExp, setAnnualRevenueExp] = useState<number | "">("");
-  const [annualTaxBenefit, setAnnualTaxBenefit] = useState<number | "">("");
+  const [annualDepreciation, setAnnualDepreciation] = useState<number | "">("");
+  const [annualTaxRatePct, setAnnualTaxRatePct] = useState<number | "">(25);
   const [yearlySales, setYearlySales] = useState<Array<number | "">>(() => Array(5).fill(""));
   const [yearlyNfr, setYearlyNfr] = useState<Array<number | "">>(() => Array(5).fill(""));
   const [yearlyRevExp, setYearlyRevExp] = useState<Array<number | "">>(() => Array(5).fill(""));
-  const [yearlyTaxBen, setYearlyTaxBen] = useState<Array<number | "">>(() => Array(5).fill(""));
+  const [yearlyDepreciation, setYearlyDepreciation] = useState<Array<number | "">>(() => Array(5).fill(""));
+  const [yearlyTaxRatePct, setYearlyTaxRatePct] = useState<Array<number | "">>(() => Array(5).fill(25));
 
   const [waccPct, setWaccPct] = useState<number | "">(9.7);
   const [financeRatePct, setFinanceRatePct] = useState<number | "">(9.7);
@@ -91,16 +93,17 @@ function Index() {
 
   // Keep year-wise arrays sized to yearsN, preserving entered values.
   useEffect(() => {
-    const resize = (prev: Array<number | "">): Array<number | ""> => {
+    const resize = (prev: Array<number | "">, fillVal: number | "" = ""): Array<number | ""> => {
       if (prev.length === yearsN) return prev;
-      const next: Array<number | ""> = Array(yearsN).fill("");
+      const next: Array<number | ""> = Array(yearsN).fill(fillVal);
       for (let i = 0; i < Math.min(prev.length, yearsN); i++) next[i] = prev[i];
       return next;
     };
-    setYearlySales(resize);
-    setYearlyNfr(resize);
-    setYearlyRevExp(resize);
-    setYearlyTaxBen(resize);
+    setYearlySales((p) => resize(p));
+    setYearlyNfr((p) => resize(p));
+    setYearlyRevExp((p) => resize(p));
+    setYearlyDepreciation((p) => resize(p));
+    setYearlyTaxRatePct((p) => resize(p, 25));
   }, [yearsN]);
 
   // Mode switcher: when switching to year-wise, copy constant values into every year.
@@ -110,13 +113,13 @@ function Index() {
       setYearlySales(Array(yearsN).fill(annualSales));
       setYearlyNfr(Array(yearsN).fill(annualNfr));
       setYearlyRevExp(Array(yearsN).fill(annualRevenueExp));
-      setYearlyTaxBen(Array(yearsN).fill(annualTaxBenefit));
+      setYearlyDepreciation(Array(yearsN).fill(annualDepreciation));
+      setYearlyTaxRatePct(Array(yearsN).fill(annualTaxRatePct));
     }
     setSalesMode(mode);
   };
 
   const capexRupees = n(capex) * unitMultiplier;
-  const otherAnnualUnit = n(annualNfr) + n(annualTaxBenefit) - n(annualRevenueExp);
 
   // Unit-aware display formatter for rupee amounts.
   const fmtUnit = (v: number) => {
@@ -125,28 +128,56 @@ function Index() {
     return `₹${scaled.toLocaleString("en-IN", { maximumFractionDigits: 2 })}${suffix}`;
   };
 
-  const cashFlows = useMemo(() => {
-    const flows: number[] = [-capexRupees];
+  // Per-year cash flow breakdown in display units (sales/nfr/exp/dep/taxRate -> CBT/Tax/CFAT/Net)
+  type YearBreakdown = {
+    sales: number;
+    nfr: number;
+    revExp: number;
+    depreciation: number;
+    taxRatePct: number;
+    cbt: number;
+    tax: number;
+    cfat: number;
+    netUnit: number;
+  };
+
+  const yearBreakdowns = useMemo<YearBreakdown[]>(() => {
+    const out: YearBreakdown[] = [];
     for (let i = 0; i < yearsN; i++) {
-      const yearUnit =
-        salesMode === "yearwise"
-          ? n(yearlySales[i]) + n(yearlyNfr[i]) + n(yearlyTaxBen[i]) - n(yearlyRevExp[i])
-          : n(annualSales) + otherAnnualUnit;
-      flows.push(yearUnit * unitMultiplier);
+      const sales = salesMode === "yearwise" ? n(yearlySales[i]) : n(annualSales);
+      const nfr = salesMode === "yearwise" ? n(yearlyNfr[i]) : n(annualNfr);
+      const revExp = salesMode === "yearwise" ? n(yearlyRevExp[i]) : n(annualRevenueExp);
+      const depreciation = salesMode === "yearwise" ? n(yearlyDepreciation[i]) : n(annualDepreciation);
+      const taxRatePct = salesMode === "yearwise" ? n(yearlyTaxRatePct[i]) : n(annualTaxRatePct);
+      const cbt = sales + nfr - revExp - depreciation;
+      const tax = cbt * (taxRatePct / 100);
+      const cfat = cbt - tax;
+      const netUnit = cfat + depreciation;
+      out.push({ sales, nfr, revExp, depreciation, taxRatePct, cbt, tax, cfat, netUnit });
     }
-    return flows;
+    return out;
   }, [
     yearsN,
-    capexRupees,
     salesMode,
     yearlySales,
     yearlyNfr,
     yearlyRevExp,
-    yearlyTaxBen,
+    yearlyDepreciation,
+    yearlyTaxRatePct,
     annualSales,
-    otherAnnualUnit,
-    unitMultiplier,
+    annualNfr,
+    annualRevenueExp,
+    annualDepreciation,
+    annualTaxRatePct,
   ]);
+
+  const cashFlows = useMemo(() => {
+    const flows: number[] = [-capexRupees];
+    for (let i = 0; i < yearsN; i++) {
+      flows.push(yearBreakdowns[i].netUnit * unitMultiplier);
+    }
+    return flows;
+  }, [yearsN, capexRupees, yearBreakdowns, unitMultiplier]);
 
   // Representative year-1 net cash flow used by the summary card / dialog context.
   const annualNet = cashFlows[1] ?? 0;
@@ -220,10 +251,12 @@ function Index() {
     setYearlySales(Array(5).fill(""));
     setYearlyNfr(Array(5).fill(""));
     setYearlyRevExp(Array(5).fill(""));
-    setYearlyTaxBen(Array(5).fill(""));
+    setYearlyDepreciation(Array(5).fill(""));
+    setYearlyTaxRatePct(Array(5).fill(25));
     setAnnualNfr("");
     setAnnualRevenueExp("");
-    setAnnualTaxBenefit("");
+    setAnnualDepreciation("");
+    setAnnualTaxRatePct(25);
     setWaccPct(9.7);
     setFinanceRatePct(9.7);
     setReinvestRatePct(9.7);
@@ -405,10 +438,22 @@ function Index() {
                         <NumInput value={annualRevenueExp} onChange={setAnnualRevenueExp} />
                       </Field>
                       <Field
-                        label={`Income Tax Benefit - annual (${unitLabel(unit)})`}
-                        tip="Annual tax savings or tax benefits."
+                        label={`Depreciation - annual (${unitLabel(unit)})`}
+                        tip="Annual depreciation charge. Reduces taxable income but is added back to compute net cash flow."
                       >
-                        <NumInput value={annualTaxBenefit} onChange={setAnnualTaxBenefit} />
+                        <NumInput value={annualDepreciation} onChange={setAnnualDepreciation} />
+                      </Field>
+                      <Field
+                        label="Income Tax Rate (%)"
+                        tip="Effective corporate income tax rate applied to Cash Flow Before Tax (CBT)."
+                      >
+                        <NumInput
+                          value={annualTaxRatePct}
+                          onChange={setAnnualTaxRatePct}
+                          min={0}
+                          max={100}
+                          step="0.1"
+                        />
                       </Field>
                     </div>
                   ) : yearsN === 0 ? (
@@ -417,14 +462,15 @@ function Index() {
                     </p>
                   ) : (
                     <div className="overflow-x-auto rounded-lg border border-primary/10">
-                      <table className="w-full min-w-[640px] text-sm">
+                      <table className="w-full min-w-[760px] text-sm">
                         <thead className="bg-muted/60 text-xs uppercase tracking-wide text-muted-foreground">
                           <tr>
                             <th className="px-3 py-2 text-left font-medium">Year</th>
                             <th className="px-3 py-2 text-left font-medium">Project Sales</th>
                             <th className="px-3 py-2 text-left font-medium">NFR Income</th>
                             <th className="px-3 py-2 text-left font-medium">Revenue Expenditure</th>
-                            <th className="px-3 py-2 text-left font-medium">Tax Benefit</th>
+                            <th className="px-3 py-2 text-left font-medium">Depreciation</th>
+                            <th className="px-3 py-2 text-left font-medium">Income Tax Rate (%)</th>
                           </tr>
                         </thead>
                         <tbody>
@@ -450,7 +496,16 @@ function Index() {
                                   <NumInput value={yearlyRevExp[i] ?? ""} onChange={cellSet(setYearlyRevExp)} />
                                 </td>
                                 <td className="px-2 py-1.5">
-                                  <NumInput value={yearlyTaxBen[i] ?? ""} onChange={cellSet(setYearlyTaxBen)} />
+                                  <NumInput value={yearlyDepreciation[i] ?? ""} onChange={cellSet(setYearlyDepreciation)} />
+                                </td>
+                                <td className="px-2 py-1.5">
+                                  <NumInput
+                                    value={yearlyTaxRatePct[i] ?? ""}
+                                    onChange={cellSet(setYearlyTaxRatePct)}
+                                    min={0}
+                                    max={100}
+                                    step="0.1"
+                                  />
                                 </td>
                               </tr>
                             );
@@ -600,16 +655,26 @@ function Index() {
                                 <Info className="size-3 text-muted-foreground/70" />
                               </span>
                             </TooltipTrigger>
-                            <TooltipContent side="top" className="max-w-[240px] text-xs leading-relaxed">
+                            <TooltipContent side="top" className="max-w-[320px] text-xs leading-relaxed">
                               {i === 0 ? (
                                 <>
                                   Year 0 outflow = −Capex = {fmtUnit(d.cashFlow || 0)}
                                 </>
-                              ) : (
-                                <>
-                                  Annual net = Sales + NFR + Tax Benefit − Expenses = {fmtUnit(d.cashFlow || 0)}
-                                </>
-                              )}
+                              ) : (() => {
+                                const b = yearBreakdowns[i - 1];
+                                return (
+                                  <div className="space-y-1">
+                                    <div className="font-semibold">Year {i} — Net Cash Flow</div>
+                                    <div>CBT = Sales + NFR − RevExp − Depreciation</div>
+                                    <div>= {b.sales} + {b.nfr} − {b.revExp} − {b.depreciation} = {b.cbt.toFixed(2)}</div>
+                                    <div>Tax = CBT × {b.taxRatePct}% = {b.tax.toFixed(2)}</div>
+                                    <div>CFAT = CBT − Tax = {b.cfat.toFixed(2)}</div>
+                                    <div className="font-semibold border-t border-white/20 pt-1">
+                                      Net = CFAT + Depreciation = {b.netUnit.toFixed(2)} → {fmtUnit(d.cashFlow || 0)}
+                                    </div>
+                                  </div>
+                                );
+                              })()}
                             </TooltipContent>
                           </Tooltip>
                         </td>
@@ -788,7 +853,7 @@ function Index() {
                   <MetricCard
                     label="Annual Net CF"
                     value={fmtUnit(annualNet || 0)}
-                    subtitle="Sales+NFR+Tax−Expenses"
+                    subtitle="CFAT + Depreciation (Y1)"
                     positive={annualNet >= 0}
                   />
                 </div>
