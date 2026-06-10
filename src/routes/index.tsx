@@ -120,7 +120,6 @@ function Index() {
   };
 
   const capexRupees = n(capex) * unitMultiplier;
-  const otherAnnualUnit = n(annualNfr) + n(annualTaxBenefit) - n(annualRevenueExp);
 
   // Unit-aware display formatter for rupee amounts.
   const fmtUnit = (v: number) => {
@@ -129,28 +128,56 @@ function Index() {
     return `₹${scaled.toLocaleString("en-IN", { maximumFractionDigits: 2 })}${suffix}`;
   };
 
-  const cashFlows = useMemo(() => {
-    const flows: number[] = [-capexRupees];
+  // Per-year cash flow breakdown in display units (sales/nfr/exp/dep/taxRate -> CBT/Tax/CFAT/Net)
+  type YearBreakdown = {
+    sales: number;
+    nfr: number;
+    revExp: number;
+    depreciation: number;
+    taxRatePct: number;
+    cbt: number;
+    tax: number;
+    cfat: number;
+    netUnit: number;
+  };
+
+  const yearBreakdowns = useMemo<YearBreakdown[]>(() => {
+    const out: YearBreakdown[] = [];
     for (let i = 0; i < yearsN; i++) {
-      const yearUnit =
-        salesMode === "yearwise"
-          ? n(yearlySales[i]) + n(yearlyNfr[i]) + n(yearlyTaxBen[i]) - n(yearlyRevExp[i])
-          : n(annualSales) + otherAnnualUnit;
-      flows.push(yearUnit * unitMultiplier);
+      const sales = salesMode === "yearwise" ? n(yearlySales[i]) : n(annualSales);
+      const nfr = salesMode === "yearwise" ? n(yearlyNfr[i]) : n(annualNfr);
+      const revExp = salesMode === "yearwise" ? n(yearlyRevExp[i]) : n(annualRevenueExp);
+      const depreciation = salesMode === "yearwise" ? n(yearlyDepreciation[i]) : n(annualDepreciation);
+      const taxRatePct = salesMode === "yearwise" ? n(yearlyTaxRatePct[i]) : n(annualTaxRatePct);
+      const cbt = sales + nfr - revExp - depreciation;
+      const tax = cbt * (taxRatePct / 100);
+      const cfat = cbt - tax;
+      const netUnit = cfat + depreciation;
+      out.push({ sales, nfr, revExp, depreciation, taxRatePct, cbt, tax, cfat, netUnit });
     }
-    return flows;
+    return out;
   }, [
     yearsN,
-    capexRupees,
     salesMode,
     yearlySales,
     yearlyNfr,
     yearlyRevExp,
-    yearlyTaxBen,
+    yearlyDepreciation,
+    yearlyTaxRatePct,
     annualSales,
-    otherAnnualUnit,
-    unitMultiplier,
+    annualNfr,
+    annualRevenueExp,
+    annualDepreciation,
+    annualTaxRatePct,
   ]);
+
+  const cashFlows = useMemo(() => {
+    const flows: number[] = [-capexRupees];
+    for (let i = 0; i < yearsN; i++) {
+      flows.push(yearBreakdowns[i].netUnit * unitMultiplier);
+    }
+    return flows;
+  }, [yearsN, capexRupees, yearBreakdowns, unitMultiplier]);
 
   // Representative year-1 net cash flow used by the summary card / dialog context.
   const annualNet = cashFlows[1] ?? 0;
