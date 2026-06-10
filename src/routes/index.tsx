@@ -251,10 +251,12 @@ function Index() {
     setYearlySales(Array(5).fill(""));
     setYearlyNfr(Array(5).fill(""));
     setYearlyRevExp(Array(5).fill(""));
-    setYearlyTaxBen(Array(5).fill(""));
+    setYearlyDepreciation(Array(5).fill(""));
+    setYearlyTaxRatePct(Array(5).fill(25));
     setAnnualNfr("");
     setAnnualRevenueExp("");
-    setAnnualTaxBenefit("");
+    setAnnualDepreciation("");
+    setAnnualTaxRatePct(25);
     setWaccPct(9.7);
     setFinanceRatePct(9.7);
     setReinvestRatePct(9.7);
