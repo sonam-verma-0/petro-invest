@@ -655,16 +655,26 @@ function Index() {
                                 <Info className="size-3 text-muted-foreground/70" />
                               </span>
                             </TooltipTrigger>
-                            <TooltipContent side="top" className="max-w-[240px] text-xs leading-relaxed">
+                            <TooltipContent side="top" className="max-w-[320px] text-xs leading-relaxed">
                               {i === 0 ? (
                                 <>
                                   Year 0 outflow = −Capex = {fmtUnit(d.cashFlow || 0)}
                                 </>
-                              ) : (
-                                <>
-                                  Annual net = Sales + NFR + Tax Benefit − Expenses = {fmtUnit(d.cashFlow || 0)}
-                                </>
-                              )}
+                              ) : (() => {
+                                const b = yearBreakdowns[i - 1];
+                                return (
+                                  <div className="space-y-1">
+                                    <div className="font-semibold">Year {i} — Net Cash Flow</div>
+                                    <div>CBT = Sales + NFR − RevExp − Depreciation</div>
+                                    <div>= {b.sales} + {b.nfr} − {b.revExp} − {b.depreciation} = {b.cbt.toFixed(2)}</div>
+                                    <div>Tax = CBT × {b.taxRatePct}% = {b.tax.toFixed(2)}</div>
+                                    <div>CFAT = CBT − Tax = {b.cfat.toFixed(2)}</div>
+                                    <div className="font-semibold border-t border-white/20 pt-1">
+                                      Net = CFAT + Depreciation = {b.netUnit.toFixed(2)} → {fmtUnit(d.cashFlow || 0)}
+                                    </div>
+                                  </div>
+                                );
+                              })()}
                             </TooltipContent>
                           </Tooltip>
                         </td>
