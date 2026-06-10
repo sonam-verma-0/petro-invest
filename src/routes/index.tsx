@@ -93,16 +93,17 @@ function Index() {
 
   // Keep year-wise arrays sized to yearsN, preserving entered values.
   useEffect(() => {
-    const resize = (prev: Array<number | "">): Array<number | ""> => {
+    const resize = (prev: Array<number | "">, fillVal: number | "" = ""): Array<number | ""> => {
       if (prev.length === yearsN) return prev;
-      const next: Array<number | ""> = Array(yearsN).fill("");
+      const next: Array<number | ""> = Array(yearsN).fill(fillVal);
       for (let i = 0; i < Math.min(prev.length, yearsN); i++) next[i] = prev[i];
       return next;
     };
-    setYearlySales(resize);
-    setYearlyNfr(resize);
-    setYearlyRevExp(resize);
-    setYearlyTaxBen(resize);
+    setYearlySales((p) => resize(p));
+    setYearlyNfr((p) => resize(p));
+    setYearlyRevExp((p) => resize(p));
+    setYearlyDepreciation((p) => resize(p));
+    setYearlyTaxRatePct((p) => resize(p, 25));
   }, [yearsN]);
 
   // Mode switcher: when switching to year-wise, copy constant values into every year.
@@ -112,7 +113,8 @@ function Index() {
       setYearlySales(Array(yearsN).fill(annualSales));
       setYearlyNfr(Array(yearsN).fill(annualNfr));
       setYearlyRevExp(Array(yearsN).fill(annualRevenueExp));
-      setYearlyTaxBen(Array(yearsN).fill(annualTaxBenefit));
+      setYearlyDepreciation(Array(yearsN).fill(annualDepreciation));
+      setYearlyTaxRatePct(Array(yearsN).fill(annualTaxRatePct));
     }
     setSalesMode(mode);
   };
