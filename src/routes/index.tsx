@@ -76,6 +76,12 @@ function Index() {
   const [yearlyDepreciation, setYearlyDepreciation] = useState<Array<number | "">>(() => Array(5).fill(""));
   const [yearlyTaxRatePct, setYearlyTaxRatePct] = useState<Array<number | "">>(() => Array(5).fill(25));
 
+  // Year-wise auto growth / escalation
+  const [salesGrowthPct, setSalesGrowthPct] = useState<number | "">(0);
+  const [expEscalationPct, setExpEscalationPct] = useState<number | "">(0);
+  const [autoGrowSales, setAutoGrowSales] = useState<boolean>(false);
+  const [autoEscalateExp, setAutoEscalateExp] = useState<boolean>(false);
+
   const [waccPct, setWaccPct] = useState<number | "">(9.7);
   const [financeRatePct, setFinanceRatePct] = useState<number | "">(9.7);
   const [reinvestRatePct, setReinvestRatePct] = useState<number | "">(9.7);
@@ -117,6 +123,38 @@ function Index() {
       setYearlyTaxRatePct(Array(yearsN).fill(annualTaxRatePct));
     }
     setSalesMode(mode);
+  };
+
+  // Propagate values forward from a given index using a percentage rate.
+  const propagate = (arr: Array<number | "">, fromIdx: number, ratePct: number): Array<number | ""> => {
+    const next = [...arr];
+    const rate = ratePct / 100;
+    for (let i = Math.max(fromIdx, 0) + 1; i < next.length; i++) {
+      const prev = next[i - 1];
+      const prevNum = typeof prev === "number" ? prev : prev === "" ? 0 : Number(prev) || 0;
+      const val = prevNum * (1 + rate);
+      next[i] = Math.round(val * 100) / 100;
+    }
+    return next;
+  };
+
+  // Toggle auto-grow and immediately propagate from Y1.
+  const toggleAutoGrowSales = (checked: boolean) => {
+    setAutoGrowSales(checked);
+    if (checked) setYearlySales((prev) => propagate(prev, 0, n(salesGrowthPct)));
+  };
+  const toggleAutoEscalateExp = (checked: boolean) => {
+    setAutoEscalateExp(checked);
+    if (checked) setYearlyRevExp((prev) => propagate(prev, 0, n(expEscalationPct)));
+  };
+
+  const onSalesGrowthChange = (v: number | "") => {
+    setSalesGrowthPct(v);
+    if (autoGrowSales) setYearlySales((prev) => propagate(prev, 0, n(v)));
+  };
+  const onExpEscalationChange = (v: number | "") => {
+    setExpEscalationPct(v);
+    if (autoEscalateExp) setYearlyRevExp((prev) => propagate(prev, 0, n(v)));
   };
 
   const capexRupees = n(capex) * unitMultiplier;
@@ -253,6 +291,10 @@ function Index() {
     setYearlyRevExp(Array(5).fill(""));
     setYearlyDepreciation(Array(5).fill(""));
     setYearlyTaxRatePct(Array(5).fill(25));
+    setSalesGrowthPct(0);
+    setExpEscalationPct(0);
+    setAutoGrowSales(false);
+    setAutoEscalateExp(false);
     setAnnualNfr("");
     setAnnualRevenueExp("");
     setAnnualDepreciation("");
@@ -461,57 +503,125 @@ function Index() {
                       Set the number of years to enter year-wise cash flows.
                     </p>
                   ) : (
-                    <div className="overflow-x-auto rounded-lg border border-primary/10">
-                      <table className="w-full min-w-[760px] text-sm">
-                        <thead className="bg-muted/60 text-xs uppercase tracking-wide text-muted-foreground">
-                          <tr>
-                            <th className="px-3 py-2 text-left font-medium">Year</th>
-                            <th className="px-3 py-2 text-left font-medium">Project Sales</th>
-                            <th className="px-3 py-2 text-left font-medium">NFR Income</th>
-                            <th className="px-3 py-2 text-left font-medium">Revenue Expenditure</th>
-                            <th className="px-3 py-2 text-left font-medium">Depreciation</th>
-                            <th className="px-3 py-2 text-left font-medium">Income Tax Rate (%)</th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          {Array.from({ length: yearsN }, (_, i) => {
-                            const cellSet = (
-                              setter: React.Dispatch<React.SetStateAction<Array<number | "">>>,
-                            ) => (v: number | "") =>
-                              setter((prev) => {
-                                const next = [...prev];
-                                next[i] = v;
-                                return next;
-                              });
-                            return (
-                              <tr key={i} className="border-t border-primary/10">
-                                <td className="px-3 py-2 font-medium text-foreground">Y{i + 1}</td>
-                                <td className="px-2 py-1.5">
-                                  <NumInput value={yearlySales[i] ?? ""} onChange={cellSet(setYearlySales)} />
-                                </td>
-                                <td className="px-2 py-1.5">
-                                  <NumInput value={yearlyNfr[i] ?? ""} onChange={cellSet(setYearlyNfr)} />
-                                </td>
-                                <td className="px-2 py-1.5">
-                                  <NumInput value={yearlyRevExp[i] ?? ""} onChange={cellSet(setYearlyRevExp)} />
-                                </td>
-                                <td className="px-2 py-1.5">
-                                  <NumInput value={yearlyDepreciation[i] ?? ""} onChange={cellSet(setYearlyDepreciation)} />
-                                </td>
-                                <td className="px-2 py-1.5">
-                                  <NumInput
-                                    value={yearlyTaxRatePct[i] ?? ""}
-                                    onChange={cellSet(setYearlyTaxRatePct)}
-                                    min={0}
-                                    max={100}
-                                    step="0.1"
-                                  />
-                                </td>
-                              </tr>
-                            );
-                          })}
-                        </tbody>
-                      </table>
+                    <div className="space-y-4">
+                      {/* Auto growth / escalation controls */}
+                      <div className="grid gap-3 md:grid-cols-2">
+                        <div className="rounded-lg border border-primary/10 bg-background/60 p-3">
+                          <div className="flex items-center justify-between gap-3">
+                            <label className="text-xs font-medium text-muted-foreground">
+                              Sales Growth Rate (%)
+                            </label>
+                            <label className="inline-flex items-center gap-2 text-xs text-foreground cursor-pointer">
+                              <input
+                                type="checkbox"
+                                checked={autoGrowSales}
+                                onChange={(e) => toggleAutoGrowSales(e.target.checked)}
+                                className="size-4 rounded border-primary/40 accent-accent"
+                              />
+                              Auto Calculate
+                            </label>
+                          </div>
+                          <div className="mt-2">
+                            <NumInput
+                              value={salesGrowthPct}
+                              onChange={onSalesGrowthChange}
+                              min={-100}
+                              max={1000}
+                              step="0.1"
+                            />
+                          </div>
+                        </div>
+                        <div className="rounded-lg border border-primary/10 bg-background/60 p-3">
+                          <div className="flex items-center justify-between gap-3">
+                            <label className="text-xs font-medium text-muted-foreground">
+                              Expenditure Escalation Rate (%)
+                            </label>
+                            <label className="inline-flex items-center gap-2 text-xs text-foreground cursor-pointer">
+                              <input
+                                type="checkbox"
+                                checked={autoEscalateExp}
+                                onChange={(e) => toggleAutoEscalateExp(e.target.checked)}
+                                className="size-4 rounded border-primary/40 accent-accent"
+                              />
+                              Auto Calculate
+                            </label>
+                          </div>
+                          <div className="mt-2">
+                            <NumInput
+                              value={expEscalationPct}
+                              onChange={onExpEscalationChange}
+                              min={-100}
+                              max={1000}
+                              step="0.1"
+                            />
+                          </div>
+                        </div>
+                      </div>
+
+                      <div className="overflow-x-auto rounded-lg border border-primary/10">
+                        <table className="w-full min-w-[760px] text-sm">
+                          <thead className="bg-muted/60 text-xs uppercase tracking-wide text-muted-foreground">
+                            <tr>
+                              <th className="px-3 py-2 text-left font-medium">Year</th>
+                              <th className="px-3 py-2 text-left font-medium">Project Sales</th>
+                              <th className="px-3 py-2 text-left font-medium">NFR Income</th>
+                              <th className="px-3 py-2 text-left font-medium">Revenue Expenditure</th>
+                              <th className="px-3 py-2 text-left font-medium">Depreciation</th>
+                              <th className="px-3 py-2 text-left font-medium">Income Tax Rate (%)</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            {Array.from({ length: yearsN }, (_, i) => {
+                              const cellSet = (
+                                setter: React.Dispatch<React.SetStateAction<Array<number | "">>>,
+                              ) => (v: number | "") =>
+                                setter((prev) => {
+                                  const next = [...prev];
+                                  next[i] = v;
+                                  return next;
+                                });
+                              const setSalesCell = (v: number | "") =>
+                                setYearlySales((prev) => {
+                                  const next = [...prev];
+                                  next[i] = v;
+                                  return autoGrowSales ? propagate(next, i, n(salesGrowthPct)) : next;
+                                });
+                              const setRevExpCell = (v: number | "") =>
+                                setYearlyRevExp((prev) => {
+                                  const next = [...prev];
+                                  next[i] = v;
+                                  return autoEscalateExp ? propagate(next, i, n(expEscalationPct)) : next;
+                                });
+                              return (
+                                <tr key={i} className="border-t border-primary/10">
+                                  <td className="px-3 py-2 font-medium text-foreground">Y{i + 1}</td>
+                                  <td className="px-2 py-1.5">
+                                    <NumInput value={yearlySales[i] ?? ""} onChange={setSalesCell} />
+                                  </td>
+                                  <td className="px-2 py-1.5">
+                                    <NumInput value={yearlyNfr[i] ?? ""} onChange={cellSet(setYearlyNfr)} />
+                                  </td>
+                                  <td className="px-2 py-1.5">
+                                    <NumInput value={yearlyRevExp[i] ?? ""} onChange={setRevExpCell} />
+                                  </td>
+                                  <td className="px-2 py-1.5">
+                                    <NumInput value={yearlyDepreciation[i] ?? ""} onChange={cellSet(setYearlyDepreciation)} />
+                                  </td>
+                                  <td className="px-2 py-1.5">
+                                    <NumInput
+                                      value={yearlyTaxRatePct[i] ?? ""}
+                                      onChange={cellSet(setYearlyTaxRatePct)}
+                                      min={0}
+                                      max={100}
+                                      step="0.1"
+                                    />
+                                  </td>
+                                </tr>
+                              );
+                            })}
+                          </tbody>
+                        </table>
+                      </div>
                     </div>
                   )}
                 </div>
