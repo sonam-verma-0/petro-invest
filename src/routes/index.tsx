@@ -322,12 +322,12 @@ function Index() {
                 decoding="async"
                 loading="eager"
               />
-              <div className="mt-4 w-full max-w-xl border-t border-primary/15 pt-4">
+              <div className="mt-1 w-full max-w-2xl border-t border-primary/15 pt-3">
                 <p className="text-base sm:text-lg font-semibold tracking-wide text-left">
                   <span className="text-primary">Evaluate.</span>
                   <span className="mx-4 text-muted-foreground/50">|</span>
                   <span className="text-primary">Analyze.</span>
-                  <span className="mx-4 text-accent">|</span>
+                  <span className="mx-4 text-muted-foreground/50">|</span>
                   <span className="text-accent">Invest.</span>
                 </p>
               </div>
