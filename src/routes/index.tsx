@@ -339,12 +339,13 @@ function Index() {
               </div>
             </div>
           </div>
-          <nav className="text-left -mt-2">
-            <p className="text-sm sm:text-base font-normal tracking-wide">
+          <div className="-mt-4 border-t border-primary/15" />
+          <nav className="text-left mt-3">
+            <p className="text-base sm:text-lg font-normal tracking-wide">
               <span className="text-primary">Evaluate.</span>
-              <span className="mx-3 text-muted-foreground/50">|</span>
+              <span className="mx-4 text-muted-foreground/40">|</span>
               <span className="text-primary">Analyze.</span>
-              <span className="mx-3 text-muted-foreground/50">|</span>
+              <span className="mx-4 text-muted-foreground/40">|</span>
               <span className="text-accent">Invest.</span>
             </p>
           </nav>
