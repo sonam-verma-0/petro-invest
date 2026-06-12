@@ -16,7 +16,7 @@ import {
 } from "recharts";
 import { mirr, npv, irr, paybackPeriod, discountedPaybackPeriod } from "@/lib/finance";
 import indianOilLogo from "@/assets/indianoil-logo.png.asset.json";
-import petroInvestLogo from "@/assets/petroinvest-logo-hires.png.asset.json";
+import petroInvestLogo from "@/assets/capital-lens-logo.png.asset.json";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -313,11 +313,11 @@ function Index() {
         <header className="mb-12">
           <div className="flex flex-col gap-6 md:flex-row md:items-center md:justify-between">
             <div className="min-w-0 flex-1 flex justify-center md:justify-start">
-              <h1 className="sr-only">PETRO INVEST — Capital Budgeting & Investment Evaluator</h1>
+              <h1 className="sr-only">CAPITAL LENS — Capital Budgeting & Investment Evaluator</h1>
               <img
                 src={petroInvestLogo.url}
-                alt="PETRO INVEST — Capital Budgeting & Investment Evaluator. Evaluate. Analyze. Invest."
-                className="h-28 sm:h-36 md:h-40 lg:h-48 w-auto object-contain"
+                alt="CAPITAL LENS — Capital Budgeting & Investment Evaluator"
+                className="h-20 sm:h-24 md:h-28 lg:h-32 w-auto object-contain"
                 style={{ imageRendering: "auto" }}
                 decoding="async"
                 loading="eager"
