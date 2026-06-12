@@ -311,8 +311,8 @@ function Index() {
     <TooltipProvider delayDuration={150}>
       <main className="mx-auto max-w-7xl px-6 py-10">
         <header className="mb-6">
-          <div className="flex flex-row items-center justify-between gap-4">
-            <div className="min-w-0 flex items-center">
+          <div className="flex flex-row items-start justify-between gap-4">
+            <div className="min-w-0 flex flex-col items-start">
               <h1 className="sr-only">CAPITAL LENS — Capital Budgeting & Investment Evaluator</h1>
               <img
                 src={petroInvestLogo.url}
@@ -322,6 +322,15 @@ function Index() {
                 decoding="async"
                 loading="eager"
               />
+              <nav className="text-left -mt-4">
+                <p className="text-sm sm:text-base font-normal tracking-wide">
+                  <span className="text-primary">Evaluate.</span>
+                  <span className="mx-3 text-muted-foreground/50">|</span>
+                  <span className="text-primary">Analyze.</span>
+                  <span className="mx-3 text-muted-foreground/50">|</span>
+                  <span className="text-accent">Invest.</span>
+                </p>
+              </nav>
             </div>
             <div className="shrink-0 flex items-center gap-3 rounded-2xl border border-primary/15 bg-card/80 px-4 py-2.5 shadow-sm backdrop-blur">
               <img
@@ -339,15 +348,6 @@ function Index() {
               </div>
             </div>
           </div>
-          <nav className="text-left -mt-4">
-            <p className="text-sm sm:text-base font-normal tracking-wide">
-              <span className="text-primary">Evaluate.</span>
-              <span className="mx-3 text-muted-foreground/50">|</span>
-              <span className="text-primary">Analyze.</span>
-              <span className="mx-3 text-muted-foreground/50">|</span>
-              <span className="text-accent">Invest.</span>
-            </p>
-          </nav>
           <p className="mt-2 text-sm sm:text-base text-muted-foreground text-left max-w-3xl">
             Transform project proposals into investment decisions through transparent financial analytics and risk-adjusted returns.
           </p>
