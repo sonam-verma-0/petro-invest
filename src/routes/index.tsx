@@ -339,7 +339,7 @@ function Index() {
               </div>
             </div>
           </div>
-          <nav className="text-left -mt-2 mb-3">
+          <nav className="text-left -mt-6 mb-1">
             <p className="text-base sm:text-lg font-normal tracking-wide">
               <span className="text-primary">Evaluate.</span>
               <span className="mx-4 text-muted-foreground/40">|</span>
