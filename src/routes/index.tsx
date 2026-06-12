@@ -317,7 +317,7 @@ function Index() {
               <img
                 src={petroInvestLogo.url}
                 alt="CAPITAL LENS — Capital Budgeting & Investment Evaluator"
-                className="h-28 sm:h-32 md:h-40 lg:h-44 w-auto object-contain"
+                className="h-40 sm:h-48 md:h-56 lg:h-64 xl:h-72 w-auto object-contain"
                 style={{ imageRendering: "auto" }}
                 decoding="async"
                 loading="eager"
@@ -339,17 +339,19 @@ function Index() {
               </div>
             </div>
           </div>
-          <p className="mt-8 max-w-2xl text-muted-foreground leading-relaxed text-center md:text-left">
-            Transform project proposals into investment decisions through
-            transparent financial analytics and risk-adjusted returns.
-          </p>
-          <p className="mt-3 max-w-2xl text-sm font-medium tracking-wide text-center md:text-left">
-            <span className="text-primary">Evaluate.</span>
-            <span className="mx-2 text-muted-foreground/60">|</span>
-            <span className="text-primary">Analyze.</span>
-            <span className="mx-2 text-muted-foreground/60">|</span>
-            <span className="text-accent">Invest.</span>
-          </p>
+          <div className="mt-8 flex flex-col items-center gap-4 border-t border-primary/10 pt-6">
+            <p className="max-w-2xl text-center text-muted-foreground leading-relaxed">
+              Transform project proposals into investment decisions through
+              transparent financial analytics and risk-adjusted returns.
+            </p>
+            <p className="text-base sm:text-lg font-semibold tracking-wide text-center">
+              <span className="text-primary">Evaluate.</span>
+              <span className="mx-3 text-muted-foreground/50">|</span>
+              <span className="text-primary">Analyze.</span>
+              <span className="mx-3 text-muted-foreground/50">|</span>
+              <span className="text-accent">Invest.</span>
+            </p>
+          </div>
         </header>
 
         <section className="grid gap-6 lg:grid-cols-[1fr_400px]">
