@@ -317,8 +317,8 @@ function Index() {
               <img
                 src={petroInvestLogo.url}
                 alt="CAPITAL LENS — Capital Budgeting & Investment Evaluator"
-                className="h-28 sm:h-32 md:h-36 lg:h-40 w-auto object-contain"
-                style={{ imageRendering: "auto" }}
+                className="h-40 sm:h-48 md:h-56 lg:h-64 w-auto object-contain"
+                style={{ imageRendering: "-webkit-optimize-contrast" }}
                 decoding="async"
                 loading="eager"
               />
@@ -339,7 +339,7 @@ function Index() {
               </div>
             </div>
           </div>
-          <nav className="mt-3 text-left">
+          <nav className="mt-1 text-left">
             <p className="text-sm sm:text-base font-normal tracking-wide">
               <span className="text-primary">Evaluate.</span>
               <span className="mx-3 text-muted-foreground/50">|</span>
