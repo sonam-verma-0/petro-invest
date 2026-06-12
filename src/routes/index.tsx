@@ -310,33 +310,24 @@ function Index() {
   return (
     <TooltipProvider delayDuration={150}>
       <main className="mx-auto max-w-7xl px-6 py-10">
-        <header className="mb-12">
-          <div className="flex flex-col gap-6 md:flex-row md:items-start md:justify-between">
-            <div className="min-w-0 flex-1 flex flex-col items-start">
+        <header className="mb-6">
+          <div className="flex flex-row items-center justify-between gap-4">
+            <div className="min-w-0 flex items-center">
               <h1 className="sr-only">CAPITAL LENS — Capital Budgeting & Investment Evaluator</h1>
               <img
                 src={petroInvestLogo.url}
                 alt="CAPITAL LENS — Capital Budgeting & Investment Evaluator"
-                className="h-40 sm:h-48 md:h-56 lg:h-64 xl:h-72 w-auto object-contain"
+                className="h-16 sm:h-20 md:h-24 w-auto object-contain"
                 style={{ imageRendering: "auto" }}
                 decoding="async"
                 loading="eager"
               />
-              <div className="mt-1 w-full max-w-2xl border-t border-primary/15 pt-3">
-                <p className="text-base sm:text-lg font-semibold tracking-wide text-left">
-                  <span className="text-primary">Evaluate.</span>
-                  <span className="mx-4 text-muted-foreground/50">|</span>
-                  <span className="text-primary">Analyze.</span>
-                  <span className="mx-4 text-muted-foreground/50">|</span>
-                  <span className="text-accent">Invest.</span>
-                </p>
-              </div>
             </div>
-            <div className="shrink-0 flex items-center gap-3 rounded-2xl border border-primary/15 bg-card/80 px-4 py-3 shadow-sm backdrop-blur">
+            <div className="shrink-0 flex items-center gap-3 rounded-2xl border border-primary/15 bg-card/80 px-4 py-2.5 shadow-sm backdrop-blur">
               <img
                 src={indianOilLogo.url}
                 alt="Indian Oil Corporation logo"
-                className="h-11 w-11 sm:h-12 sm:w-12 object-contain"
+                className="h-10 w-10 sm:h-11 sm:w-11 object-contain"
               />
               <div className="border-l border-primary/20 pl-3">
                 <div className="text-[10px] uppercase tracking-wider text-muted-foreground">
@@ -348,6 +339,18 @@ function Index() {
               </div>
             </div>
           </div>
+          <nav className="mt-3 text-left">
+            <p className="text-sm sm:text-base font-normal tracking-wide">
+              <span className="text-primary">Evaluate.</span>
+              <span className="mx-3 text-muted-foreground/50">|</span>
+              <span className="text-primary">Analyze.</span>
+              <span className="mx-3 text-muted-foreground/50">|</span>
+              <span className="text-accent">Invest.</span>
+            </p>
+          </nav>
+          <p className="mt-2 text-sm sm:text-base text-muted-foreground text-left max-w-3xl">
+            Transform project proposals into investment decisions through transparent financial analytics and risk-adjusted returns.
+          </p>
         </header>
 
         <section className="grid gap-6 lg:grid-cols-[1fr_400px]">
