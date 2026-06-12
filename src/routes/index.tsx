@@ -309,10 +309,10 @@ function Index() {
 
   return (
     <TooltipProvider delayDuration={150}>
-      <main className="mx-auto max-w-7xl px-6 py-10">
-        <header className="mb-6">
+      <main className="mx-auto max-w-7xl px-6 pt-3 pb-10">
+        <header className="mb-4">
           <div className="flex flex-row items-center justify-between gap-4">
-            <div className="min-w-0 flex items-center">
+            <div className="min-w-0 flex items-center -my-6">
               <h1 className="sr-only">CAPITAL LENS — Capital Budgeting & Investment Evaluator</h1>
               <img
                 src={petroInvestLogo.url}
@@ -339,7 +339,7 @@ function Index() {
               </div>
             </div>
           </div>
-          <nav className="text-left -mt-4">
+          <nav className="text-left -mt-2">
             <p className="text-sm sm:text-base font-normal tracking-wide">
               <span className="text-primary">Evaluate.</span>
               <span className="mx-3 text-muted-foreground/50">|</span>
