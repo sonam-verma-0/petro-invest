@@ -76,6 +76,12 @@ function Index() {
   const [yearlyDepreciation, setYearlyDepreciation] = useState<Array<number | "">>(() => Array(5).fill(""));
   const [yearlyTaxRatePct, setYearlyTaxRatePct] = useState<Array<number | "">>(() => Array(5).fill(25));
 
+  // Year-wise auto growth / escalation
+  const [salesGrowthPct, setSalesGrowthPct] = useState<number | "">(0);
+  const [expEscalationPct, setExpEscalationPct] = useState<number | "">(0);
+  const [autoGrowSales, setAutoGrowSales] = useState<boolean>(false);
+  const [autoEscalateExp, setAutoEscalateExp] = useState<boolean>(false);
+
   const [waccPct, setWaccPct] = useState<number | "">(9.7);
   const [financeRatePct, setFinanceRatePct] = useState<number | "">(9.7);
   const [reinvestRatePct, setReinvestRatePct] = useState<number | "">(9.7);
