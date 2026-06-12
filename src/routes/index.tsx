@@ -125,6 +125,38 @@ function Index() {
     setSalesMode(mode);
   };
 
+  // Propagate values forward from a given index using a percentage rate.
+  const propagate = (arr: Array<number | "">, fromIdx: number, ratePct: number): Array<number | ""> => {
+    const next = [...arr];
+    const rate = ratePct / 100;
+    for (let i = Math.max(fromIdx, 0) + 1; i < next.length; i++) {
+      const prev = next[i - 1];
+      const prevNum = typeof prev === "number" ? prev : prev === "" ? 0 : Number(prev) || 0;
+      const val = prevNum * (1 + rate);
+      next[i] = Math.round(val * 100) / 100;
+    }
+    return next;
+  };
+
+  // Toggle auto-grow and immediately propagate from Y1.
+  const toggleAutoGrowSales = (checked: boolean) => {
+    setAutoGrowSales(checked);
+    if (checked) setYearlySales((prev) => propagate(prev, 0, n(salesGrowthPct)));
+  };
+  const toggleAutoEscalateExp = (checked: boolean) => {
+    setAutoEscalateExp(checked);
+    if (checked) setYearlyRevExp((prev) => propagate(prev, 0, n(expEscalationPct)));
+  };
+
+  const onSalesGrowthChange = (v: number | "") => {
+    setSalesGrowthPct(v);
+    if (autoGrowSales) setYearlySales((prev) => propagate(prev, 0, n(v)));
+  };
+  const onExpEscalationChange = (v: number | "") => {
+    setExpEscalationPct(v);
+    if (autoEscalateExp) setYearlyRevExp((prev) => propagate(prev, 0, n(v)));
+  };
+
   const capexRupees = n(capex) * unitMultiplier;
 
   // Unit-aware display formatter for rupee amounts.
