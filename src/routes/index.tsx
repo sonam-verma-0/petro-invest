@@ -343,6 +343,13 @@ function Index() {
             Transform project proposals into investment decisions through
             transparent financial analytics and risk-adjusted returns.
           </p>
+          <p className="mt-3 max-w-2xl text-sm font-medium tracking-wide text-center md:text-left">
+            <span className="text-primary">Evaluate.</span>
+            <span className="mx-2 text-muted-foreground/60">|</span>
+            <span className="text-primary">Analyze.</span>
+            <span className="mx-2 text-muted-foreground/60">|</span>
+            <span className="text-accent">Invest.</span>
+          </p>
         </header>
 
         <section className="grid gap-6 lg:grid-cols-[1fr_400px]">
