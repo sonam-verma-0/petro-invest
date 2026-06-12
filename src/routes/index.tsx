@@ -339,8 +339,7 @@ function Index() {
               </div>
             </div>
           </div>
-          <div className="-mt-4 border-t border-primary/15" />
-          <nav className="text-left mt-3">
+          <nav className="text-left -mt-2 mb-3">
             <p className="text-base sm:text-lg font-normal tracking-wide">
               <span className="text-primary">Evaluate.</span>
               <span className="mx-4 text-muted-foreground/40">|</span>
@@ -349,6 +348,7 @@ function Index() {
               <span className="text-accent">Invest.</span>
             </p>
           </nav>
+          <div className="border-t border-primary/15" />
           <p className="mt-2 text-sm sm:text-base text-muted-foreground text-left max-w-3xl">
             Transform project proposals into investment decisions through transparent financial analytics and risk-adjusted returns.
           </p>
