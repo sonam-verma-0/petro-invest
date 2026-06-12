@@ -317,8 +317,8 @@ function Index() {
               <img
                 src={petroInvestLogo.url}
                 alt="CAPITAL LENS — Capital Budgeting & Investment Evaluator"
-                className="h-28 sm:h-32 md:h-36 lg:h-40 w-auto object-contain"
-                style={{ imageRendering: "auto" }}
+                className="h-40 sm:h-48 md:h-56 lg:h-64 w-auto object-contain"
+                style={{ imageRendering: "-webkit-optimize-contrast" }}
                 decoding="async"
                 loading="eager"
               />
