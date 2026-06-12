@@ -311,8 +311,8 @@ function Index() {
     <TooltipProvider delayDuration={150}>
       <main className="mx-auto max-w-7xl px-6 py-10">
         <header className="mb-12">
-          <div className="flex flex-col gap-6 md:flex-row md:items-center md:justify-between">
-            <div className="min-w-0 flex-1 flex justify-center md:justify-start">
+          <div className="flex flex-col gap-6 md:flex-row md:items-start md:justify-between">
+            <div className="min-w-0 flex-1 flex flex-col items-start">
               <h1 className="sr-only">CAPITAL LENS — Capital Budgeting & Investment Evaluator</h1>
               <img
                 src={petroInvestLogo.url}
@@ -322,8 +322,17 @@ function Index() {
                 decoding="async"
                 loading="eager"
               />
+              <div className="mt-4 w-full max-w-xl border-t border-primary/15 pt-4">
+                <p className="text-base sm:text-lg font-semibold tracking-wide text-left">
+                  <span className="text-primary">Evaluate.</span>
+                  <span className="mx-4 text-muted-foreground/50">|</span>
+                  <span className="text-primary">Analyze.</span>
+                  <span className="mx-4 text-accent">|</span>
+                  <span className="text-accent">Invest.</span>
+                </p>
+              </div>
             </div>
-            <div className="shrink-0 mx-auto md:mx-0 flex items-center gap-3 rounded-2xl border border-primary/15 bg-card/80 px-4 py-3 shadow-sm backdrop-blur">
+            <div className="shrink-0 flex items-center gap-3 rounded-2xl border border-primary/15 bg-card/80 px-4 py-3 shadow-sm backdrop-blur">
               <img
                 src={indianOilLogo.url}
                 alt="Indian Oil Corporation logo"
@@ -338,19 +347,6 @@ function Index() {
                 </div>
               </div>
             </div>
-          </div>
-          <div className="mt-8 flex flex-col items-center gap-4 border-t border-primary/10 pt-6">
-            <p className="max-w-2xl text-center text-muted-foreground leading-relaxed">
-              Transform project proposals into investment decisions through
-              transparent financial analytics and risk-adjusted returns.
-            </p>
-            <p className="text-base sm:text-lg font-semibold tracking-wide text-center">
-              <span className="text-primary">Evaluate.</span>
-              <span className="mx-3 text-muted-foreground/50">|</span>
-              <span className="text-primary">Analyze.</span>
-              <span className="mx-3 text-muted-foreground/50">|</span>
-              <span className="text-accent">Invest.</span>
-            </p>
           </div>
         </header>
 
