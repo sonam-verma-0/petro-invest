@@ -1076,6 +1076,16 @@ function Index() {
                   />
                 </div>
 
+                <Button
+                  type="button"
+                  onClick={() => lastRecord && generatePdf(lastRecord)}
+                  className="w-full gap-2"
+                  disabled={!lastRecord}
+                >
+                  <Download className="size-4" />
+                  Download Report as PDF
+                </Button>
+
                 <p className="text-xs text-muted-foreground">
                   Click any metric card to see the formula, substituted values
                   and decision logic.
@@ -1084,6 +1094,8 @@ function Index() {
             )}
           </aside>
         </section>
+
+        <CalculationHistory refreshKey={historyVersion} />
 
         {/* Explainer dialog */}
         <ExplainerDialog
