@@ -1,6 +1,9 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
-import { Calculator, Info, RotateCcw } from "lucide-react";
+import { Calculator, Download, Info, RotateCcw } from "lucide-react";
+import { CalculationHistory } from "@/components/CalculationHistory";
+import { addHistoryRecord } from "@/lib/history";
+import { generatePdf, type CalcRecord } from "@/lib/report";
 import {
   BarChart,
   Bar,
