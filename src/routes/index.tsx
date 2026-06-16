@@ -279,7 +279,78 @@ function Index() {
     });
   }, [cashFlows]);
 
-  const calculate = () => setShowResults(true);
+  const [historyVersion, setHistoryVersion] = useState(0);
+  const [lastRecord, setLastRecord] = useState<CalcRecord | null>(null);
+
+  const buildRecord = (): CalcRecord => {
+    const cf = cashFlows.map((v, idx) => v);
+    let cum = 0;
+    const cashflowSummary = cf.map((v, idx) => {
+      cum += v;
+      return { year: `Y${idx}`, cashFlow: v, cumulative: cum };
+    });
+    const capexRupeesLocal = n(capex) * unitMultiplier;
+    const profitabilityIndex =
+      capexRupeesLocal > 0 && npvValue != null
+        ? (npvValue + capexRupeesLocal) / capexRupeesLocal
+        : null;
+    let verdict: "INVEST" | "REJECT" | "ANALYZE" = "ANALYZE";
+    let verdictReason = "Insufficient data to compute MIRR.";
+    if (mirrValue != null) {
+      if (mirrValue >= hurdleRate) {
+        verdict = "INVEST";
+        verdictReason = `MIRR ${(mirrValue * 100).toFixed(2)}% ≥ Hurdle Rate ${(hurdleRate * 100).toFixed(2)}%`;
+      } else {
+        verdict = "REJECT";
+        verdictReason = `MIRR ${(mirrValue * 100).toFixed(2)}% < Hurdle Rate ${(hurdleRate * 100).toFixed(2)}%`;
+      }
+    }
+    return {
+      id: `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
+      timestamp: Date.now(),
+      projectName,
+      projectType,
+      years: yearsN,
+      unit,
+      inputs: {
+        capex: n(capex),
+        salesMode,
+        annualSales: n(annualSales),
+        annualNfr: n(annualNfr),
+        annualRevenueExp: n(annualRevenueExp),
+        annualDepreciation: n(annualDepreciation),
+        annualTaxRatePct: n(annualTaxRatePct),
+        yearlySales: yearlySales.map((v) => n(v)),
+        yearlyNfr: yearlyNfr.map((v) => n(v)),
+        yearlyRevExp: yearlyRevExp.map((v) => n(v)),
+        yearlyDepreciation: yearlyDepreciation.map((v) => n(v)),
+        yearlyTaxRatePct: yearlyTaxRatePct.map((v) => n(v)),
+        waccPct: n(waccPct),
+        financeRatePct: n(financeRatePct),
+        reinvestRatePct: n(reinvestRatePct),
+        hurdleRatePct: n(hurdleRatePct),
+      },
+      results: {
+        npv: npvValue,
+        irr: irrValue,
+        mirr: mirrValue,
+        payback,
+        discountedPayback,
+        profitabilityIndex,
+        verdict,
+        verdictReason,
+      },
+      cashflow: cashflowSummary,
+    };
+  };
+
+  const calculate = () => {
+    setShowResults(true);
+    const rec = buildRecord();
+    setLastRecord(rec);
+    addHistoryRecord(rec);
+    setHistoryVersion((v) => v + 1);
+  };
 
   const resetAll = () => {
     setProjectName("New IOCL Project");
