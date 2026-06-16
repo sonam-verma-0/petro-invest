@@ -331,7 +331,7 @@ function Index() {
               />
               <div className="border-l border-primary/20 pl-3">
                 <div className="text-[10px] uppercase tracking-wider text-muted-foreground">
-                  In association with
+                  In collaboration with
                 </div>
                 <div className="text-sm font-semibold text-primary leading-tight">
                   Indian Oil Corporation Ltd.
