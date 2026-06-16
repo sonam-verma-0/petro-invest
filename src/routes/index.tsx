@@ -283,9 +283,8 @@ function Index() {
   const [lastRecord, setLastRecord] = useState<CalcRecord | null>(null);
 
   const buildRecord = (): CalcRecord => {
-    const cf = cashFlows.map((v, idx) => v);
     let cum = 0;
-    const cashflowSummary = cf.map((v, idx) => {
+    const cashflowSummary = cashFlows.map((v, idx) => {
       cum += v;
       return { year: `Y${idx}`, cashFlow: v, cumulative: cum };
     });
