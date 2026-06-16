@@ -1,6 +1,9 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
-import { Calculator, Info, RotateCcw } from "lucide-react";
+import { Calculator, Download, Info, RotateCcw } from "lucide-react";
+import { CalculationHistory } from "@/components/CalculationHistory";
+import { addHistoryRecord } from "@/lib/history";
+import { generatePdf, type CalcRecord } from "@/lib/report";
 import {
   BarChart,
   Bar,
@@ -276,7 +279,77 @@ function Index() {
     });
   }, [cashFlows]);
 
-  const calculate = () => setShowResults(true);
+  const [historyVersion, setHistoryVersion] = useState(0);
+  const [lastRecord, setLastRecord] = useState<CalcRecord | null>(null);
+
+  const buildRecord = (): CalcRecord => {
+    let cum = 0;
+    const cashflowSummary = cashFlows.map((v, idx) => {
+      cum += v;
+      return { year: `Y${idx}`, cashFlow: v, cumulative: cum };
+    });
+    const capexRupeesLocal = n(capex) * unitMultiplier;
+    const profitabilityIndex =
+      capexRupeesLocal > 0 && npvValue != null
+        ? (npvValue + capexRupeesLocal) / capexRupeesLocal
+        : null;
+    let verdict: "INVEST" | "REJECT" | "ANALYZE" = "ANALYZE";
+    let verdictReason = "Insufficient data to compute MIRR.";
+    if (mirrValue != null) {
+      if (mirrValue >= hurdleRate) {
+        verdict = "INVEST";
+        verdictReason = `MIRR ${(mirrValue * 100).toFixed(2)}% ≥ Hurdle Rate ${(hurdleRate * 100).toFixed(2)}%`;
+      } else {
+        verdict = "REJECT";
+        verdictReason = `MIRR ${(mirrValue * 100).toFixed(2)}% < Hurdle Rate ${(hurdleRate * 100).toFixed(2)}%`;
+      }
+    }
+    return {
+      id: `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
+      timestamp: Date.now(),
+      projectName,
+      projectType,
+      years: yearsN,
+      unit,
+      inputs: {
+        capex: n(capex),
+        salesMode,
+        annualSales: n(annualSales),
+        annualNfr: n(annualNfr),
+        annualRevenueExp: n(annualRevenueExp),
+        annualDepreciation: n(annualDepreciation),
+        annualTaxRatePct: n(annualTaxRatePct),
+        yearlySales: yearlySales.map((v) => n(v)),
+        yearlyNfr: yearlyNfr.map((v) => n(v)),
+        yearlyRevExp: yearlyRevExp.map((v) => n(v)),
+        yearlyDepreciation: yearlyDepreciation.map((v) => n(v)),
+        yearlyTaxRatePct: yearlyTaxRatePct.map((v) => n(v)),
+        waccPct: n(waccPct),
+        financeRatePct: n(financeRatePct),
+        reinvestRatePct: n(reinvestRatePct),
+        hurdleRatePct: n(hurdleRatePct),
+      },
+      results: {
+        npv: npvValue,
+        irr: irrValue,
+        mirr: mirrValue,
+        payback,
+        discountedPayback,
+        profitabilityIndex,
+        verdict,
+        verdictReason,
+      },
+      cashflow: cashflowSummary,
+    };
+  };
+
+  const calculate = () => {
+    setShowResults(true);
+    const rec = buildRecord();
+    setLastRecord(rec);
+    addHistoryRecord(rec);
+    setHistoryVersion((v) => v + 1);
+  };
 
   const resetAll = () => {
     setProjectName("New IOCL Project");
@@ -1002,6 +1075,16 @@ function Index() {
                   />
                 </div>
 
+                <Button
+                  type="button"
+                  onClick={() => lastRecord && generatePdf(lastRecord)}
+                  className="w-full gap-2"
+                  disabled={!lastRecord}
+                >
+                  <Download className="size-4" />
+                  Download Report as PDF
+                </Button>
+
                 <p className="text-xs text-muted-foreground">
                   Click any metric card to see the formula, substituted values
                   and decision logic.
@@ -1010,6 +1093,8 @@ function Index() {
             )}
           </aside>
         </section>
+
+        <CalculationHistory refreshKey={historyVersion} />
 
         {/* Explainer dialog */}
         <ExplainerDialog
