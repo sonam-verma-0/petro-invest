@@ -423,7 +423,7 @@ function Index() {
           </nav>
           <div className="border-t border-primary/15" />
           <p className="mt-2 text-sm sm:text-base text-muted-foreground text-left max-w-3xl">
-            Transform project proposals into investment decisions through transparent financial analytics and risk-adjusted returns.
+            Transform project proposals into investment decisions through transparent financial analytics and <span className="whitespace-nowrap">risk-adjusted returns.</span>
           </p>
         </header>
 
