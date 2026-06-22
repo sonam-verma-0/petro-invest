@@ -446,20 +446,13 @@ function Index() {
                 </Field>
                 <Field label="Project Type">
                   <div className="flex gap-2">
-                    {(["new", "existing"] as const).map((t) => (
-                      <button
-                        key={t}
-                        type="button"
-                        onClick={() => setProjectType(t)}
-                        className={`flex-1 rounded-lg border px-3 py-2 text-sm font-medium capitalize transition ${
-                          projectType === t
-                            ? "border-accent bg-accent text-accent-foreground"
-                            : "bg-background hover:bg-muted"
-                        }`}
-                      >
-                        {t} Project
-                      </button>
-                    ))}
+                    <button
+                      type="button"
+                      className="flex-1 rounded-lg border border-accent bg-accent px-3 py-2 text-sm font-medium capitalize text-accent-foreground"
+                      disabled
+                    >
+                      New Project
+                    </button>
                   </div>
                 </Field>
                 <Field label="Number of Years (excluding Year 0)">
