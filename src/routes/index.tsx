@@ -1352,7 +1352,7 @@ function MirrExplain({ ctx }: { ctx: ExplainerCtx }) {
       </Section>
       <Section title="Substituted values">
         <Formula>
-          {`Finance Rate     = ${(financeRate * 100).toFixed(2)}%
+          {`WACC             = ${(wacc * 100).toFixed(2)}%
 Reinvest Rate    = ${(reinvestRate * 100).toFixed(2)}%
 n (periods)      = ${n}
 
