@@ -244,7 +244,7 @@ function Index() {
     console.log("[PETRO INVEST] debug", {
       unit,
       unitMultiplier,
-      ratesDecimal: { wacc, financeRate, reinvestRate, hurdleRate },
+      ratesDecimal: { wacc, reinvestRate, hurdleRate },
       cashFlowsRupees: cashFlows,
       cashFlowsInUnit: cashFlows.map((v) => v / unitMultiplier),
       mirr: mirrValue,
@@ -1043,10 +1043,6 @@ function Index() {
                   />
                   <Row label="WACC" value={`${(wacc * 100).toFixed(2)}%`} />
                   <Row
-                    label="Finance Rate"
-                    value={`${(financeRate * 100).toFixed(2)}%`}
-                  />
-                  <Row
                     label="Reinvestment Rate"
                     value={`${(reinvestRate * 100).toFixed(2)}%`}
                   />
@@ -1089,7 +1085,6 @@ function Index() {
             payback,
             discountedPayback,
             wacc,
-            financeRate,
             reinvestRate,
             hurdleRate,
             yearsN,
