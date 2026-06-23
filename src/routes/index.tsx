@@ -86,7 +86,7 @@ function Index() {
   const [autoEscalateExp, setAutoEscalateExp] = useState<boolean>(false);
 
   const [waccPct, setWaccPct] = useState<number | "">(9.7);
-  const [financeRatePct, setFinanceRatePct] = useState<number | "">(9.7);
+  
   const [reinvestRatePct, setReinvestRatePct] = useState<number | "">(9.7);
   const [hurdleRatePct, setHurdleRatePct] = useState<number | "">(12);
 
