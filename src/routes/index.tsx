@@ -86,7 +86,7 @@ function Index() {
   const [autoEscalateExp, setAutoEscalateExp] = useState<boolean>(false);
 
   const [waccPct, setWaccPct] = useState<number | "">(9.7);
-  const [financeRatePct, setFinanceRatePct] = useState<number | "">(9.7);
+  
   const [reinvestRatePct, setReinvestRatePct] = useState<number | "">(9.7);
   const [hurdleRatePct, setHurdleRatePct] = useState<number | "">(12);
 
@@ -95,7 +95,7 @@ function Index() {
 
   const n = (v: number | "") => (v === "" ? 0 : v);
   const wacc = n(waccPct) / 100;
-  const financeRate = n(financeRatePct) / 100;
+  const financeRate = wacc;
   const reinvestRate = n(reinvestRatePct) / 100;
   const hurdleRate = n(hurdleRatePct) / 100;
   const yearsN = Math.max(0, Math.floor(n(years)));
@@ -227,8 +227,8 @@ function Index() {
   const hasPositive = cashFlows.some((v) => v > 0);
 
   const mirrValue = useMemo(
-    () => mirr(cashFlows, financeRate, reinvestRate),
-    [cashFlows, financeRate, reinvestRate],
+    () => mirr(cashFlows, wacc, reinvestRate),
+    [cashFlows, wacc, reinvestRate],
   );
   const irrValue = useMemo(() => irr(cashFlows), [cashFlows]);
   const npvValue = useMemo(() => npv(wacc, cashFlows), [cashFlows, wacc]);
@@ -244,7 +244,7 @@ function Index() {
     console.log("[PETRO INVEST] debug", {
       unit,
       unitMultiplier,
-      ratesDecimal: { wacc, financeRate, reinvestRate, hurdleRate },
+      ratesDecimal: { wacc, reinvestRate, hurdleRate },
       cashFlowsRupees: cashFlows,
       cashFlowsInUnit: cashFlows.map((v) => v / unitMultiplier),
       mirr: mirrValue,
@@ -325,7 +325,7 @@ function Index() {
         yearlyDepreciation: yearlyDepreciation.map((v) => n(v)),
         yearlyTaxRatePct: yearlyTaxRatePct.map((v) => n(v)),
         waccPct: n(waccPct),
-        financeRatePct: n(financeRatePct),
+        financeRatePct: n(waccPct),
         reinvestRatePct: n(reinvestRatePct),
         hurdleRatePct: n(hurdleRatePct),
       },
@@ -373,7 +373,7 @@ function Index() {
     setAnnualDepreciation("");
     setAnnualTaxRatePct(25);
     setWaccPct(9.7);
-    setFinanceRatePct(9.7);
+    
     setReinvestRatePct(9.7);
     setHurdleRatePct(12);
     setShowResults(false);
@@ -725,18 +725,6 @@ function Index() {
                   />
                 </Field>
                 <Field
-                  label="Finance Rate % (MIRR)"
-                  tip="Discount rate applied to negative (financing) cash flows in MIRR."
-                >
-                  <NumInput
-                    value={financeRatePct}
-                    onChange={setFinanceRatePct}
-                    min={0}
-                    max={100}
-                    step="0.1"
-                  />
-                </Field>
-                <Field
                   label="Reinvestment Rate % (MIRR)"
                   tip="Rate at which positive cash flows are reinvested in MIRR."
                 >
@@ -1055,10 +1043,6 @@ function Index() {
                   />
                   <Row label="WACC" value={`${(wacc * 100).toFixed(2)}%`} />
                   <Row
-                    label="Finance Rate"
-                    value={`${(financeRate * 100).toFixed(2)}%`}
-                  />
-                  <Row
                     label="Reinvestment Rate"
                     value={`${(reinvestRate * 100).toFixed(2)}%`}
                   />
@@ -1101,7 +1085,6 @@ function Index() {
             payback,
             discountedPayback,
             wacc,
-            financeRate,
             reinvestRate,
             hurdleRate,
             yearsN,
@@ -1260,7 +1243,7 @@ type ExplainerCtx = {
   payback: number | null;
   discountedPayback: number | null;
   wacc: number;
-  financeRate: number;
+  
   reinvestRate: number;
   hurdleRate: number;
   yearsN: number;
@@ -1340,12 +1323,12 @@ function Formula({ children }: { children: React.ReactNode }) {
 
 
 function MirrExplain({ ctx }: { ctx: ExplainerCtx }) {
-  const { cashFlows, financeRate, reinvestRate, mirrValue, hurdleRate } = ctx;
+  const { cashFlows, wacc, reinvestRate, mirrValue, hurdleRate } = ctx;
   const n = cashFlows.length - 1;
   let pvNeg = 0;
   let fvPos = 0;
   cashFlows.forEach((v, i) => {
-    if (v < 0) pvNeg += v / Math.pow(1 + financeRate, i);
+    if (v < 0) pvNeg += v / Math.pow(1 + wacc, i);
     else if (v > 0) fvPos += v * Math.pow(1 + reinvestRate, n - i);
   });
 
@@ -1369,7 +1352,7 @@ function MirrExplain({ ctx }: { ctx: ExplainerCtx }) {
       </Section>
       <Section title="Substituted values">
         <Formula>
-          {`Finance Rate     = ${(financeRate * 100).toFixed(2)}%
+          {`WACC             = ${(wacc * 100).toFixed(2)}%
 Reinvest Rate    = ${(reinvestRate * 100).toFixed(2)}%
 n (periods)      = ${n}
 

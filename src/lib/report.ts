@@ -145,7 +145,7 @@ export function generatePdf(r: CalcRecord) {
           ]
         : []),
       ["Discount Rate (WACC)", `${i.waccPct}%`],
-      ["Finance Rate", `${i.financeRatePct}%`],
+      
       ["Reinvestment Rate", `${i.reinvestRatePct}%`],
       ["Hurdle Rate", `${i.hurdleRatePct}%`],
     ],
