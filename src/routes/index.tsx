@@ -1323,7 +1323,7 @@ function Formula({ children }: { children: React.ReactNode }) {
 
 
 function MirrExplain({ ctx }: { ctx: ExplainerCtx }) {
-  const { cashFlows, financeRate, reinvestRate, mirrValue, hurdleRate } = ctx;
+  const { cashFlows, wacc, reinvestRate, mirrValue, hurdleRate } = ctx;
   const n = cashFlows.length - 1;
   let pvNeg = 0;
   let fvPos = 0;
