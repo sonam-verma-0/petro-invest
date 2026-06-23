@@ -1328,7 +1328,7 @@ function MirrExplain({ ctx }: { ctx: ExplainerCtx }) {
   let pvNeg = 0;
   let fvPos = 0;
   cashFlows.forEach((v, i) => {
-    if (v < 0) pvNeg += v / Math.pow(1 + financeRate, i);
+    if (v < 0) pvNeg += v / Math.pow(1 + wacc, i);
     else if (v > 0) fvPos += v * Math.pow(1 + reinvestRate, n - i);
   });
 
