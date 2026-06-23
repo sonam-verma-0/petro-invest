@@ -95,7 +95,7 @@ function Index() {
 
   const n = (v: number | "") => (v === "" ? 0 : v);
   const wacc = n(waccPct) / 100;
-  const financeRate = n(financeRatePct) / 100;
+  const financeRate = wacc;
   const reinvestRate = n(reinvestRatePct) / 100;
   const hurdleRate = n(hurdleRatePct) / 100;
   const yearsN = Math.max(0, Math.floor(n(years)));
@@ -227,8 +227,8 @@ function Index() {
   const hasPositive = cashFlows.some((v) => v > 0);
 
   const mirrValue = useMemo(
-    () => mirr(cashFlows, financeRate, reinvestRate),
-    [cashFlows, financeRate, reinvestRate],
+    () => mirr(cashFlows, wacc, reinvestRate),
+    [cashFlows, wacc, reinvestRate],
   );
   const irrValue = useMemo(() => irr(cashFlows), [cashFlows]);
   const npvValue = useMemo(() => npv(wacc, cashFlows), [cashFlows, wacc]);
@@ -373,7 +373,7 @@ function Index() {
     setAnnualDepreciation("");
     setAnnualTaxRatePct(25);
     setWaccPct(9.7);
-    setFinanceRatePct(9.7);
+    
     setReinvestRatePct(9.7);
     setHurdleRatePct(12);
     setShowResults(false);
