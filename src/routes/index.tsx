@@ -1243,7 +1243,7 @@ type ExplainerCtx = {
   payback: number | null;
   discountedPayback: number | null;
   wacc: number;
-  financeRate: number;
+  
   reinvestRate: number;
   hurdleRate: number;
   yearsN: number;
