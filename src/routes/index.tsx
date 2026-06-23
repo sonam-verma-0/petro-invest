@@ -325,7 +325,7 @@ function Index() {
         yearlyDepreciation: yearlyDepreciation.map((v) => n(v)),
         yearlyTaxRatePct: yearlyTaxRatePct.map((v) => n(v)),
         waccPct: n(waccPct),
-        financeRatePct: n(financeRatePct),
+        financeRatePct: n(waccPct),
         reinvestRatePct: n(reinvestRatePct),
         hurdleRatePct: n(hurdleRatePct),
       },
@@ -719,18 +719,6 @@ function Index() {
                   <NumInput
                     value={waccPct}
                     onChange={setWaccPct}
-                    min={0}
-                    max={100}
-                    step="0.1"
-                  />
-                </Field>
-                <Field
-                  label="Finance Rate % (MIRR)"
-                  tip="Discount rate applied to negative (financing) cash flows in MIRR."
-                >
-                  <NumInput
-                    value={financeRatePct}
-                    onChange={setFinanceRatePct}
                     min={0}
                     max={100}
                     step="0.1"
